@@ -20,7 +20,7 @@ $ npm install -g recce
 $ recce COMMAND
 running command...
 $ recce (-v|--version|version)
-recce/2.0.0 darwin-x64 node-v12.1.0
+recce/3.0.0 linux-x64 node-v10.16.0
 $ recce --help [COMMAND]
 USAGE
   $ recce COMMAND
@@ -71,8 +71,6 @@ EXAMPLES
   $ recce build --no-clean --no-minimize -m umd -e src/hello.ts
 ```
 
-_See code: [lib/commands/build.js](https://github.com/escapace/recce/blob/v2.0.0/lib/commands/build.js)_
-
 ## `recce help [COMMAND]`
 
 Print usage and options.
@@ -87,8 +85,6 @@ ARGUMENTS
 OPTIONS
   --all  See all commands in CLI.
 ```
-
-_See code: [lib/commands/help.js](https://github.com/escapace/recce/blob/v2.0.0/lib/commands/help.js)_
 
 ## `recce test`
 
@@ -122,6 +118,4 @@ EXAMPLES
   $ recce test -p [directory] --browser 'src/**.spec.ts' --browser 'test/**.spec.ts'
   $ recce test -p [directory] --node 'src/**.spec.ts' --node 'test/**.spec.ts'
 ```
-
-_See code: [lib/commands/test.js](https://github.com/escapace/recce/blob/v2.0.0/lib/commands/test.js)_
 <!-- commandsstop -->
