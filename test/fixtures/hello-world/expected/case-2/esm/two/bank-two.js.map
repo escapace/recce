@@ -1,1 +1,1 @@
-{"version":3,"sources":["src/two/bank-two.ts"],"names":["bang"],"mappings":"AAAA,OAAO,MAAMA,IAAI,GAAG,GAAb","file":"bank-two.js","sourcesContent":["export const bang = '!'\n"]}
+{"version":3,"sources":["src/two/bank-two.ts"],"names":["bang"],"mappings":"AAAA,OAAO,MAAMA,IAAI,GAAG,GAAb","file":"bank-two.js","sourceRoot":"../../.."}

@@ -4,7 +4,6 @@
 import { test } from '@oclif/test'
 import { join, resolve } from 'path'
 import { compare } from '../helpers/compare'
-// import { rimraf } from '../../src/utilities/rimraf'
 
 const fixtureA = resolve('test/fixtures/hello-world')
 const fixtureZ = resolve('test/fixtures/invalid')
@@ -76,8 +75,10 @@ describe('one entry', () => {
       '-e',
       'src/hello.ts'
     ])
-    .it('build -p [directory] --no-minimize -m cjs -m umd -e src/hello.ts', async () =>
-      compare(join(fixtureA, 'lib'), join(fixtureA, 'expected/case-1'))
+    .it(
+      'build -p [directory] --no-minimize -m cjs -m umd -e src/hello.ts',
+      async () =>
+        compare(join(fixtureA, 'lib'), join(fixtureA, 'expected/case-1'))
     )
 })
 
@@ -90,12 +91,32 @@ describe('two entries', () => {
 
   test
     .stdout()
-    .command(['build', '-p', fixtureA, '-m', 'cjs', '-e', 'src/hello.ts', '-e', 'src/world.ts'])
+    .command([
+      'build',
+      '-p',
+      fixtureA,
+      '-m',
+      'cjs',
+      '-e',
+      'src/hello.ts',
+      '-e',
+      'src/world.ts'
+    ])
     .it('build -p [directory] -m cjs -e src/hello.ts -e src/world.ts')
 
   test
     .stdout()
-    .command(['build', '-p', fixtureA, '-m', 'umd', '-e', 'src/hello.ts', '-e', 'src/world.ts'])
+    .command([
+      'build',
+      '-p',
+      fixtureA,
+      '-m',
+      'umd',
+      '-e',
+      'src/hello.ts',
+      '-e',
+      'src/world.ts'
+    ])
     .it('build -p [directory] -m umd -e src/hello.ts -e src/world.ts')
 
   // Case 2
@@ -118,6 +139,7 @@ describe('two entries', () => {
     ])
     .it(
       'build -p [directory] --no-minimize -m cjs -m umd -e src/hello.ts -e src/world.ts',
-      async () => compare(join(fixtureA, 'lib'), join(fixtureA, 'expected/case-2'))
+      async () =>
+        compare(join(fixtureA, 'lib'), join(fixtureA, 'expected/case-2'))
     )
 })

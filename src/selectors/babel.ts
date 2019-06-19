@@ -5,7 +5,8 @@ import { BuildModule, State } from '../types'
 import { compact, get, isString, omit } from 'lodash'
 import { condLodash, lodashId } from './lodash'
 import { condRamda } from './ramda'
-import { context, packageJson, rootModules } from './general'
+import { condTest, context, packageJson, rootModules } from './general'
+import { babelPluginIstanbulOptions, condCoverage } from './test'
 
 const nodeTarget = createSelector(
   packageJson,
@@ -53,6 +54,12 @@ export const babelOptions = (module: BuildModule) => (state: State) => ({
             useES: true
           }
         ]
+      : undefined,
+    module !== 'esm' && condTest(state) && condCoverage(state)
+      ? [
+          resolveFrom(rootModules(state), 'babel-plugin-istanbul'),
+          babelPluginIstanbulOptions(state)
+        ]
       : undefined
   ]),
   presets: compact([
@@ -66,12 +73,13 @@ export const babelOptions = (module: BuildModule) => (state: State) => ({
             modules: false,
             loose: true,
             ignoreBrowserslistConfig: module === 'cjs',
-            targets:
-              module === 'cjs'
-                ? {
+            ...(module === 'cjs'
+              ? {
+                  targets: {
                     node: nodeTarget(state)
                   }
-                : undefined
+                }
+              : {})
           }
         ]
       : undefined

@@ -69,7 +69,7 @@ export interface Options {
   mode: Mode
   rootDir?: string
   compilerOptions: CompilerOptions
-  entries: string[]
+  entries: { [key: string]: string[] }
   modules: BuildModules
   outputPath: string
   minimize: boolean
@@ -82,7 +82,7 @@ export interface Options {
   machineReadable: boolean
 }
 
-export type Mode = 'build'
+export type Mode = 'build' | 'test'
 
 export interface State {
   oclifConfig: OclifConfig
@@ -100,6 +100,7 @@ export interface State {
       options: LodashOptions
     }
     compilerOptions: CompilerOptions
+    test: TestConfig
   }
 }
 
@@ -115,6 +116,26 @@ export interface BuildResult {
   stats: any
 }
 
+export interface TestConfig {
+  coverage: boolean
+  output: string
+  captureConsole: boolean
+}
+
 export { MinifyOptions } from 'terser-webpack-plugin'
 export { Node as NodeOptions } from 'webpack'
 export { Options as LodashOptions } from 'lodash-webpack-plugin'
+
+export type Reporter =
+  | 'lcovonly'
+  | 'text'
+  | 'clover'
+  | 'cobertura'
+  | 'html'
+  | 'json'
+  | 'json-summary'
+  | 'lcov'
+  | 'none'
+  | 'teamcity'
+  | 'text-lcov'
+  | 'text-summary'

@@ -1,1 +1,1 @@
-{"version":3,"sources":["src/bang.ts"],"names":["bang"],"mappings":"AAAA,OAAO,MAAMA,IAAI,GAAG,GAAb","file":"bang.js","sourcesContent":["export const bang = '!'\n"]}
+{"version":3,"sources":["src/bang.ts"],"names":["bang"],"mappings":"AAAA,OAAO,MAAMA,IAAI,GAAG,GAAb","file":"bang.js","sourceRoot":"../.."}

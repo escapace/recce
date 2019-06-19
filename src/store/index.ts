@@ -19,14 +19,21 @@ import {
   SET_PACKAGE_JSON,
   SET_PREFIX,
   SET_ROOTDIR,
+  SET_TEST_CONFIG,
   SET_TSCONFIG
 } from '../actions'
 
-export function isType<P>(action: AnyAction, actionCreator: ActionCreator<P>): action is Action<P> {
+export function isType<P>(
+  action: AnyAction,
+  actionCreator: ActionCreator<P>
+): action is Action<P> {
   return action.type === actionCreator.type
 }
 
-const reducer = (state: DeepPartial<State> = INITIAL_STATE, action: AnyAction) => {
+const reducer = (
+  state: DeepPartial<State> = INITIAL_STATE,
+  action: AnyAction
+) => {
   return produce<State>(state as State, draft => {
     if (isType(action, SET_OCLIF_CONFIG)) {
       draft.oclifConfig = action.payload
@@ -63,6 +70,10 @@ const reducer = (state: DeepPartial<State> = INITIAL_STATE, action: AnyAction) =
       draft.runtime.build.push(action.payload)
     } else if (isType(action, RESET)) {
       assign(draft, INITIAL_STATE)
+    } else if (isType(action, SET_TEST_CONFIG)) {
+      draft.defaults.test = action.payload
+
+      return draft
     } else if (isType(action, RESET_TYPESCRIPT_ERRORS)) {
       draft.runtime.errors = {}
     }

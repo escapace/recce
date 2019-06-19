@@ -4,15 +4,26 @@ import prettyBytes = require('pretty-bytes')
 import {
   buildResults,
   buildResultsWithErrors,
-  // compilationStats,
+  condBuild,
   machineReadable
+  // compilationStats,
 } from '../selectors'
 import { readFileAsync } from '../utilities'
 import { dispatchFilesFromErrors, reportErrors } from './errors'
 import { logger } from '@escapace/logger'
 import { store } from '../store'
 import { BuildReports } from '../types'
-import { forEach, fromPairs, isEmpty, map, toUpper } from 'lodash'
+import {
+  filter,
+  flatten,
+  forEach,
+  fromPairs,
+  isEmpty,
+  isUndefined,
+  map,
+  toUpper,
+  uniq
+} from 'lodash'
 
 export const report = async () => {
   const results = buildResults(store.getState())
@@ -22,7 +33,18 @@ export const report = async () => {
     await dispatchFilesFromErrors()
     reportErrors()
 
-    // forEach(uniq(flatten(map(fail, f => f.errors))), s => logger.error(s))
+    // Report webpack errors
+    forEach(
+      uniq(
+        flatten(
+          map(
+            filter(fail, f => f.hasErrors && !isUndefined(f.stats)),
+            ({ errors }) => errors
+          )
+        )
+      ),
+      e => logger.error(e)
+    )
 
     throw new Error('Recce could not finish the build')
   }
@@ -54,15 +76,21 @@ export const report = async () => {
     )
   ) as BuildReports
 
-  if (machineReadable(store.getState())) {
-    // tslint:disable-next-line no-console
-    console.log(JSON.stringify(reports, null, '  '))
-  } else {
-    logger.log('')
+  if (condBuild(store.getState())) {
+    if (machineReadable(store.getState())) {
+      // tslint:disable-next-line no-console
+      console.log(JSON.stringify(reports, null, '  '))
+    } else {
+      logger.log('')
 
-    // tslint:disable-next-line no-shadowed-variable
-    forEach(reports, ({ gzipSize, size }, key) => {
-      logger.log(`${toUpper(key)}: ${prettyBytes(size)} (${prettyBytes(gzipSize)} gzipped)`)
-    })
+      // tslint:disable-next-line no-shadowed-variable
+      forEach(reports, ({ gzipSize, size }, key) => {
+        logger.log(
+          `${toUpper(key)}: ${prettyBytes(size)} (${prettyBytes(
+            gzipSize
+          )} gzipped)`
+        )
+      })
+    }
   }
 }

@@ -1,11 +1,11 @@
+import sourcemaps = require('gulp-sourcemaps')
 import babel = require('gulp-babel')
-import gulp = require('gulp')
 import gulpFilter = require('gulp-filter')
 import gulpTap = require('gulp-tap')
 import merge = require('merge2')
 import path from 'path'
 import resolveFrom = require('resolve-from')
-import sourcemaps = require('gulp-sourcemaps')
+import gulp = require('gulp')
 import typescript = require('gulp-typescript')
 import { BuildResult } from '../types'
 import { BUILD_RESULT, SET_ROOTDIR } from '../actions'
@@ -14,6 +14,8 @@ import { normalizeGulpError } from './errors'
 import { store } from '../store'
 import {
   compilerOptions,
+  condBuild,
+  condTest,
   context,
   contextModules,
   declaration,
@@ -26,7 +28,9 @@ import {
 export const gulpBuild = async () => {
   const state = store.getState()
 
-  const compiler = await import(resolveFrom(contextModules(state), 'typescript'))
+  const compiler = await import(
+    resolveFrom(contextModules(state), 'typescript')
+  )
 
   return new Promise<BuildResult>(resolve => {
     const result: BuildResult = {
@@ -71,7 +75,9 @@ export const gulpBuild = async () => {
 
             store.dispatch(
               SET_ROOTDIR(
-                isUndefined(project.options.rootDir) ? context(state) : project.options.rootDir
+                isUndefined(project.options.rootDir)
+                  ? context(state)
+                  : project.options.rootDir
               )
             )
 
@@ -87,9 +93,13 @@ export const gulpBuild = async () => {
       )
       .on('error', noop)
 
-    const specFilter = gulpFilter(file => !/\.spec\.js$/.test(file.path))
-    const specTypesFilter = gulpFilter(file => !/\.spec\.d\.ts$/.test(file.path))
-    // const sourcemapFilter = gulpFilter(file => !/\.map$/.test(file.path))
+    const specFilter = gulpFilter(file =>
+      condBuild(store.getState()) ? !/\.spec\.js$/.test(file.path) : true
+    )
+
+    const specTypesFilter = gulpFilter(file =>
+      condBuild(store.getState()) ? !/\.spec\.d\.ts$/.test(file.path) : true
+    )
 
     const ds = declaration(state)
       ? stream.dts.pipe(specTypesFilter).pipe(gulp.dest(outputPathTypes(state)))
@@ -101,7 +111,10 @@ export const gulpBuild = async () => {
       .pipe(babel(gulpBabelOptions(state) as any))
       .pipe(
         sourcemaps.write('.', {
-          includeContent: true
+          includeContent: false,
+          sourceRoot: condTest(state)
+            ? context(state)
+            : path.relative(outputPathEsm(state), context(state))
         })
       )
       .pipe(gulp.dest(outputPathEsm(state)))

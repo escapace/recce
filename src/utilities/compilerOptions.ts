@@ -4,7 +4,7 @@ import { store } from '../store'
 import { tsconfig } from '../selectors'
 import { checkTsconfig } from './checkTsconfig'
 
-import * as ts from 'typescript'
+import ts from 'typescript'
 import { dirname } from 'path'
 
 const ModuleResolutionKind = {
@@ -39,7 +39,9 @@ const ScriptTarget = {
 /**
  * Load TypeScript configuration.
  */
-const parse = (filename: string): CompilerOptions => {
+export const parseJsonConfig = (
+  filename: string
+): { compilerOptions: CompilerOptions; parsedConfig: ts.ParsedCommandLine } => {
   const result = ts.readConfigFile(filename, ts.sys.readFile)
 
   // Return diagnostics.
@@ -58,7 +60,8 @@ const parse = (filename: string): CompilerOptions => {
     useCaseSensitiveFileNames: true
   }
 
-  const parsedConfig: { options: CompilerOptions } = ts.parseJsonConfigFileContent(
+  // tslint:disable-next-line: no-any
+  const parsedConfig: any = ts.parseJsonConfigFileContent(
     config,
     parseConfigHost,
     basePath,
@@ -74,7 +77,10 @@ const parse = (filename: string): CompilerOptions => {
   }
 
   if (isNumber(parsedConfig.options.target)) {
-    parsedConfig.options.target = findKey(ScriptTarget, m => m === parsedConfig.options.target)
+    parsedConfig.options.target = findKey(
+      ScriptTarget,
+      m => m === parsedConfig.options.target
+    )
   }
 
   if (isNumber(parsedConfig.options.moduleResolution)) {
@@ -90,16 +96,26 @@ const parse = (filename: string): CompilerOptions => {
     )
   }
 
-  return omit(parsedConfig.options, ['configFilePath', 'paths', 'typeRoots'])
+  return {
+    compilerOptions: omit(parsedConfig.options, [
+      'configFilePath',
+      'paths',
+      'typeRoots'
+    ]),
+    parsedConfig
+  }
 }
 
-export const compilerOptions = async (): Promise<CompilerOptions> => {
+export const compilerOptions = async (
+  prop?: ReturnType<typeof parseJsonConfig>
+): Promise<CompilerOptions> => {
   await checkTsconfig()
 
   const state = store.getState()
   const filename = tsconfig(state)
 
-  const json = parse(filename)
-
-  return defaults(json, state.defaults.compilerOptions)
+  return defaults(
+    prop ? prop.compilerOptions : parseJsonConfig(filename).compilerOptions,
+    state.defaults.compilerOptions
+  )
 }

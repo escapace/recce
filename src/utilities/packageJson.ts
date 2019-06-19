@@ -22,7 +22,9 @@ export const packageJson = async (
   if (!isNull(path)) {
     return {
       path: path,
-      content: normalizePackageJson(JSON.parse(await readFileAsync(path, 'utf8')))
+      content: normalizePackageJson(
+        JSON.parse(await readFileAsync(path, 'utf8'))
+      )
     }
   }
 

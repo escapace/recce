@@ -6,7 +6,8 @@
         "semi": false,
         "parser": "babylon",
         "singleQuote": true,
-        "trailingComma": "none"
+        "trailingComma": "none",
+        "printWidth": 80
       }
     },
     {
@@ -15,7 +16,8 @@
         "semi": false,
         "parser": "typescript",
         "singleQuote": true,
-        "trailingComma": "none"
+        "trailingComma": "none",
+        "printWidth": 80
       }
     },
     {

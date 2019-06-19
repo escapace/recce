@@ -9,5 +9,6 @@
   "dependencies": {
     "lodash": "^4.17.11",
     "typescript": "^3.2.1"
-  }
+  },
+  "browserslist": "iOS 7"
 }

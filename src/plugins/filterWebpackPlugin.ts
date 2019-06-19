@@ -18,15 +18,20 @@ export class FilterWebpackPlugin {
   public apply(compiler: Compiler) {
     const filter = this.options.select === true ? pick : omit
 
-    compiler.hooks.emit.tapAsync('RecceFilterWebpackPlugin', (compilation, callback) => {
-      if (this.options.patterns.length > 0) {
-        const files = keys(compilation.assets)
-        const matchedFiles = mm(files, this.options.patterns, { basename: true })
+    compiler.hooks.emit.tapAsync(
+      'RecceFilterWebpackPlugin',
+      (compilation, callback) => {
+        if (this.options.patterns.length > 0) {
+          const files = keys(compilation.assets)
+          const matchedFiles = mm(files, this.options.patterns, {
+            basename: true
+          })
 
-        compilation.assets = filter(compilation.assets, matchedFiles)
+          compilation.assets = filter(compilation.assets, matchedFiles)
+        }
+
+        callback()
       }
-
-      callback()
-    })
+    )
   }
 }

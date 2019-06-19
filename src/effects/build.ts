@@ -1,16 +1,22 @@
-import path from 'path'
 import { BuildModule, BuildModules } from '../types'
+import { gulpBuild } from './gulp'
 import { SET_BUILD_OPTIONS } from '../actions'
 import {
+  condBuild,
   condBuildWithErrors,
   condClean,
   condStats,
+  condTest,
   context,
   machineReadable,
   modules
 } from '../selectors'
-import { clean, compilerOptions as parseCompilerOptions, realpathAsync } from '../utilities'
-import { gulpBuild } from './gulp'
+import {
+  clean,
+  compilerOptions as parseCompilerOptions,
+  realpathAsync
+} from '../utilities'
+import path from 'path'
 import { store } from '../store'
 import { webpackBuild } from './webpack'
 import { writeStats } from './stats'
@@ -21,6 +27,7 @@ import {
   compact,
   concat,
   filter,
+  fromPairs,
   includes,
   isEmpty,
   isString,
@@ -32,7 +39,45 @@ import {
   without
 } from 'lodash'
 
-export const build = async (flags: {
+const spinner = () => {
+  const nonInteractive =
+    process.env.TEST_OUTPUT === 'true' ||
+    machineReadable(store.getState()) ||
+    condTest(store.getState())
+
+  const instance = nonInteractive
+    ? null
+    : ora({
+        spinner: 'line',
+        color: 'white'
+      }).start()
+
+  const update = (text: string) => {
+    const success = !condBuildWithErrors(store.getState())
+
+    if (instance !== null) {
+      instance.stopAndPersist({
+        symbol: success ? '✓' : '×',
+        text
+      })
+
+      instance.start('')
+    }
+  }
+
+  const stop = () => {
+    if (instance !== null) {
+      instance.stop()
+    }
+  }
+
+  return {
+    update,
+    stop
+  }
+}
+
+export interface BuildFlags {
   entry: string[]
   clean: boolean
   minimize: boolean
@@ -40,11 +85,26 @@ export const build = async (flags: {
   output: string | undefined
   stats: boolean
   'machine-readable': boolean
-}) => {
+}
+
+export const setup = async (flags: BuildFlags) => {
   const entries: string[] = await Promise.all(
     // tslint:disable-next-line no-unnecessary-callback-wrapper
-    map(isUndefined(flags.entry) ? [] : uniq(compact(flags.entry)), file => realpathAsync(file))
+    map(isUndefined(flags.entry) ? [] : uniq(compact(flags.entry)), file =>
+      realpathAsync(file)
+    )
   )
+
+  if (condBuild(store.getState())) {
+    if (
+      uniq(map(entries, entry => path.parse(entry).name)).length !==
+      entries.length
+    ) {
+      throw new Error(
+        `Entry name collision, use different filenames:\n${entries}`
+      )
+    }
+  }
 
   let buildModules: BuildModules
 
@@ -52,7 +112,9 @@ export const build = async (flags: {
     buildModules = [flags.module as BuildModule]
   } else {
     const hasEntry = !isEmpty(entries)
-    const defaultModules: BuildModules = hasEntry ? ['esm', 'cjs', 'umd'] : ['esm']
+    const defaultModules: BuildModules = hasEntry
+      ? ['esm', 'cjs', 'umd']
+      : ['esm']
 
     buildModules = uniq(
       filter(
@@ -78,14 +140,16 @@ export const build = async (flags: {
   const compilerOptions = await parseCompilerOptions()
 
   if (!includes(['es6', 'es2015', 'esnext'], toLower(compilerOptions.module))) {
-    throw new Error("The 'module' in compiler options must be one of es6, es2015 or esnext")
+    throw new Error(
+      "The 'module' in compiler options must be one of es6, es2015 or esnext"
+    )
   }
 
   store.dispatch(
     SET_BUILD_OPTIONS({
       clean: _clean,
       compilerOptions,
-      entries,
+      entries: fromPairs(map(entries, file => [path.parse(file).name, [file]])),
       minimize,
       outputPath,
       modules: buildModules,
@@ -93,74 +157,52 @@ export const build = async (flags: {
       machineReadable: !!flags['machine-readable']
     })
   )
+}
 
-  const nonInteractive = process.env.TEST_OUTPUT === 'true' || machineReadable(store.getState())
-
-  const spinner = nonInteractive
-    ? null
-    : ora({
-        spinner: 'line',
-        color: 'white'
-      }).start()
-
-  const updateSpinner = (text: string) => {
-    const success = !condBuildWithErrors(store.getState())
-
-    if (spinner !== null) {
-      spinner.stopAndPersist({
-        symbol: success ? '✓' : '×',
-        text
-      })
-
-      spinner.start('')
-    }
-  }
-
-  const stopSpinner = () => {
-    if (spinner !== null) {
-      spinner.stop()
-    }
-  }
+export const build = async () => {
+  const { update, stop } = spinner()
 
   await clean()
     .then(() => {
       if (condClean(store.getState())) {
-        updateSpinner('Cleaned the output directory')
+        update('Cleaned the output directory')
       }
     })
     .then(gulpBuild)
-    .then(() => updateSpinner('Completed the ES Module build'))
+    .then(() => update('Completed the ES Module build'))
     .then(() =>
       Promise.all(
-        map(without(modules(store.getState()), 'esm'), mod => {
+        map(without(modules(store.getState()), 'esm'), async mod => {
           // tslint:disable-next-line: no-any
           const p: Promise<any> = condBuildWithErrors(store.getState())
             ? Promise.resolve()
             : webpackBuild(mod as 'cjs' | 'umd')
 
-          return p.then(() =>
-            updateSpinner(
-              mod === 'cjs'
-                ? 'Completed the CommonJS build'
-                : 'Completed the UMD (Universal Module Definition) build'
-            )
+          await p
+
+          update(
+            mod === 'cjs'
+              ? 'Completed the CommonJS build'
+              : 'Completed the UMD (Universal Module Definition) build'
           )
         })
       )
     )
     .then(writeStats)
     .then(() => {
+      const buildModules = modules(store.getState())
+
       if (
         condStats(store.getState()) &&
         !(buildModules.length === 1 && buildModules[0] === 'esm')
       ) {
-        updateSpinner('Saved the compilation statistics')
+        update('Saved the compilation statistics')
       }
     })
-    .then(stopSpinner)
+    .then(stop)
     .then(report)
     .catch(e => {
-      stopSpinner()
+      stop()
 
       throw e
     })

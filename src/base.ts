@@ -21,10 +21,12 @@ import {
 
 export default abstract class extends Command {
   public static flags = {
-    help: flags.help({ char: 'h' }),
+    help: flags.help({ char: 'h', hidden: true }),
     project: flags.string({
       char: 'p',
-      description: "path to 'tsconfig.json', or to a folder with it",
+      helpValue: 'path',
+      description:
+        "Path to project's configuration file, or to a folder with a 'tsconfig.json'.",
       required: false
     })
   }

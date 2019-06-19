@@ -6,7 +6,8 @@ import { combinedDependencies } from './general'
 
 const id = (state: State): string[] => state.defaults.lodash.id
 
-export const lodashOptions = (state: State): LodashOptions => state.defaults.lodash.options
+export const lodashOptions = (state: State): LodashOptions =>
+  state.defaults.lodash.options
 
 export const lodashId = createSelector(
   combinedDependencies,

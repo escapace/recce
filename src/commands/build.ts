@@ -6,7 +6,7 @@ import { pick } from 'lodash'
 import { commandFlags } from '../constants'
 
 export default class Build extends Command {
-  public static description = 'build TypeScript library'
+  public static description = 'Bundle the library for publishing.'
 
   public static examples = [
     '$ recce build -p [directory] -m esm -e src/hello.ts',
@@ -36,8 +36,10 @@ export default class Build extends Command {
 
     this.store.dispatch(SET_MODE('build'))
 
-    const { build } = await import('../effects/build')
+    const { build, setup } = await import('../effects/build')
 
-    return build(flags)
+    await setup(flags)
+
+    return build()
   }
 }

@@ -1,6 +1,6 @@
 export { checkTsconfig } from './checkTsconfig'
 export { clean } from './clean'
-export { compilerOptions } from './compilerOptions'
+export { compilerOptions, parseJsonConfig } from './compilerOptions'
 export { isDirectory } from './isDirectory'
 export { isEmpty } from './isEmpty'
 export { isFile } from './isFile'

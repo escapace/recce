@@ -12,7 +12,15 @@ import { EOL } from 'os'
 import { TypeScriptError } from 'gulp-typescript/release/reporter'
 import { codeFrameColumns } from '@babel/code-frame'
 import { context, files, tsErrors } from '../selectors/general'
-import { forEach, forOwn, includes, isUndefined, keys, upperCase, values } from 'lodash'
+import {
+  forEach,
+  forOwn,
+  includes,
+  isUndefined,
+  keys,
+  upperCase,
+  values
+} from 'lodash'
 import { logger } from '@escapace/logger'
 import { normalize, relative } from 'path'
 import { store } from '../store'
@@ -47,7 +55,11 @@ export const dispatchFilesFromErrors = async () => {
   const p: { [key: string]: Promise<FileSource> } = {}
 
   forOwn(tsErrors(store.getState()), ({ error }) => {
-    if (error.file !== '' && !includes(filenames, error.file) && isUndefined(p[error.file])) {
+    if (
+      error.file !== '' &&
+      !includes(filenames, error.file) &&
+      isUndefined(p[error.file])
+    ) {
       p[error.file] = readFileAsync(error.file)
         .then(buf => buf.toString('utf-8'))
         .then(source => ({
@@ -66,7 +78,8 @@ export const reportErrors = () => {
   const state = store.getState()
 
   forEach(tsErrors(state), ({ error }) => {
-    const file = error.file === '' ? '' : chalk.cyan(relative(error.context, error.file))
+    const file =
+      error.file === '' ? '' : chalk.cyan(relative(error.context, error.file))
     const code = chalk.bold.gray(`TS${error.code}`)
     const severity =
       error.severity === 'error'
@@ -91,9 +104,16 @@ export const reportErrors = () => {
           .join(EOL)
       }
 
-      const loc = `:${chalk.yellow(String(error.line))}:${chalk.yellow(String(error.character))}`
+      const loc = `:${chalk.yellow(String(error.line))}:${chalk.yellow(
+        String(error.character)
+      )}`
 
-      logger.log(`\n${file}${loc} - ${severity} ${code}: ${error.content}`, EOL, frame, EOL)
+      logger.log(
+        `\n${file}${loc} - ${severity} ${code}: ${error.content}`,
+        EOL,
+        frame,
+        EOL
+      )
     }
   })
 }
@@ -102,7 +122,9 @@ export const reportErrors = () => {
 export const normalizeGulpError = (error: TypeScriptError, compiler: any) => {
   const state = store.getState()
 
-  const severity = compiler.DiagnosticCategory[error.diagnostic.category].toLowerCase()
+  const severity = compiler.DiagnosticCategory[
+    error.diagnostic.category
+  ].toLowerCase()
 
   const file = error.diagnostic.file
 
@@ -112,7 +134,10 @@ export const normalizeGulpError = (error: TypeScriptError, compiler: any) => {
       : // tslint:disable-next-line no-non-null-assertion no-unnecessary-type-assertion
         file.getLineAndCharacterOfPosition(error.diagnostic.start!)
 
-  const content = compiler.flattenDiagnosticMessageText(error.diagnostic.messageText, EOL)
+  const content = compiler.flattenDiagnosticMessageText(
+    error.diagnostic.messageText,
+    EOL
+  )
 
   dispatchError({ module: 'esm' })({
     severity,

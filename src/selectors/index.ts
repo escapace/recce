@@ -1,32 +1,36 @@
 export {
-  buildResults,
-  buildResultsWithErrors,
-  compilerOptions,
-  condBuild,
-  condBuildWithErrors,
-  condClean,
-  condWatch,
-  context,
-  contextModules,
-  declaration,
-  entries,
-  files,
-  machineReadable,
-  modules,
-  outputPath,
-  outputPathCjs,
-  outputPathEsm,
-  outputPathTypes,
-  outputPathUmd,
-  packageName,
   tsErrors,
-  tsconfig
+  tsconfig,
+  packageName,
+  outputPathUmd,
+  outputPathTypes,
+  outputPathEsm,
+  outputPathCjs,
+  outputPath,
+  modules,
+  machineReadable,
+  files,
+  entries,
+  declaration,
+  contextModules,
+  rootModules,
+  context,
+  condWatch,
+  condTest,
+  condClean,
+  condBuildWithErrors,
+  condBuild,
+  compilerOptions,
+  buildResultsWithErrors,
+  buildResults
 } from './general'
 
 export { compilationStats, condStats, outputPathStats } from './stats'
 
-export { webpackConfiguration } from './webpack'
+export { webpackConfiguration, webpackEntries } from './webpack'
 
 export { gulpBabelOptions } from './babel'
+
+export { condCoverage, testOutput, captureConsole } from './test'
 
 export { lodashId } from './lodash'

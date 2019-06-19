@@ -9,7 +9,10 @@ export const checkTsconfig = async () => {
 
   if (!(await isFile(tsconfig(state))).test) {
     throw new Error(
-      `File not found: ${relative(context(state), tsconfig(state))} in ${context(state)}`
+      `File not found: ${relative(
+        context(state),
+        tsconfig(state)
+      )} in ${context(state)}`
     )
   }
 }

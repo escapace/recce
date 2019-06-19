@@ -2,7 +2,7 @@ import path from 'path'
 import webpack = require('webpack')
 import { BuildResult } from '../types'
 import { compact, concat, filter, isNull, isUndefined, map, noop } from 'lodash'
-import { condBuild, condWatch, webpackConfiguration } from '../selectors'
+import { webpackConfiguration } from '../selectors'
 import { store } from '../store'
 import { BUILD_RESULT } from '../actions'
 
@@ -20,19 +20,19 @@ export const webpackBuild = async (
   const compiler = webpack(configuration)
 
   const method = (handler: webpack.ICompiler.Handler) => {
-    const state = store.getState()
+    // const state = store.getState()
 
-    if (condBuild(state)) {
-      return compiler.run(handler) as undefined
-    } else if (condWatch(state)) {
-      return compiler.watch(
-        {
-          aggregateTimeout: 300,
-          poll: true
-        },
-        handler
-      )
-    }
+    // if (condBuild(state)) {
+    return compiler.run(handler) as undefined
+    // } else if (condWatch(state)) {
+    //   return compiler.watch(
+    //     {
+    //       aggregateTimeout: 300,
+    //       poll: true
+    //     },
+    //     handler
+    //   )
+    // }
   }
 
   return new Promise<{
@@ -62,7 +62,9 @@ export const webpackBuild = async (
           result.assets = map(info.assets, asset => asset.name)
 
           if (isNull(err)) {
-            result.errors = map(stats.compilation.errors, value => value.toString())
+            result.errors = map(stats.compilation.errors, value =>
+              value.toString()
+            )
           } else {
             result.errors = concat(compact([err.message, err.details]))
           }
@@ -76,7 +78,9 @@ export const webpackBuild = async (
           callback(result)
         } else {
           result.assets = filter(
-            map(info.assets, asset => path.join(info.outputPath as string, asset.name)),
+            map(info.assets, asset =>
+              path.join(info.outputPath as string, asset.name)
+            ),
             p => !/\.js\.map/.test(p)
           )
 

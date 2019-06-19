@@ -1,1 +1,1 @@
-{"version":3,"sources":["pure.js","src/pure.ts"],"names":["two"],"mappings":"AAAA;;ACAA,MAAMA,GAAG;AAAA;AAAG,CAAC,MAAK;AAChB,SAAO,IAAI,CAAX;AACD,CAFW,GAAZ","file":"pure.js","sourcesContent":["\"use strict\";\nconst two = (() => {\n    return 1 + 1;\n})();\n","const two = (() => {\n  return 1 + 1;\n})()\n"]}
+{"version":3,"sources":["pure.js","src/pure.ts"],"names":["two"],"mappings":"AAAA;;ACAA,MAAMA,GAAG;AAAA;AAAG,CAAC,MAAK;AAChB,SAAO,IAAI,CAAX;AACD,CAFW,GAAZ","file":"pure.js","sourceRoot":"../.."}

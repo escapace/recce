@@ -1,11 +1,11 @@
 import TerserPlugin = require('terser-webpack-plugin')
 import lodashPlugin = require('lodash-webpack-plugin')
 import nodeExternals = require('webpack-node-externals')
-import resolveFrom = require('resolve-from')
+import resolveFrom from 'resolve-from'
 import { DoneHookWebpackPlugin, FilterWebpackPlugin } from '../plugins'
 import { createSelector } from 'reselect'
-import { parse, relative, resolve } from 'path'
-import { camelCase, compact, fromPairs, map } from 'lodash'
+import { relative, resolve } from 'path'
+import { camelCase, compact, map, mapValues, pick } from 'lodash'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 
 import { MinifyOptions, State } from '../types'
@@ -14,6 +14,7 @@ import webpack = require('webpack')
 
 import {
   condMinimize,
+  condTest,
   condWatch,
   context,
   contextModules,
@@ -34,27 +35,40 @@ import { babelOptions } from './babel'
 
 const minifyOptions = (state: State): MinifyOptions => state.defaults.minify
 
-const webpackEntries = createSelector(
+export const webpackEntries = createSelector(
   entries,
   rootDir,
   outputPathEsm,
   context,
-  (ents, root, ope, ctxx): { [key: string]: string } =>
-    fromPairs(
-      map(ents, ent => [
-        parse(ent).name,
-        `./${relative(
-          ctxx,
+  (_entries, _rootDir, _outputPathEsm, _context): { [key: string]: string[] } =>
+    mapValues(_entries, value =>
+      map(
+        value,
+        _path =>
           resolve(
-            ope,
-            relative(root as string, resolve(root as string, ent)).replace(/\.ts$/, '.js')
+            _outputPathEsm,
+            relative(
+              _rootDir as string,
+              resolve(_rootDir as string, _path)
+            ).replace(/\.ts$/, '.js')
           )
-        )}`
-      ])
+        // `./${relative(
+        //   _context,
+        //   resolve(
+        //     _outputPathEsm,
+        //     relative(
+        //       _rootDir as string,
+        //       resolve(_rootDir as string, _path)
+        //     ).replace(/\.ts$/, '.js')
+        //   )
+        // )}`
+      )
     )
 )
 
-const webpackRules = (module: 'cjs' | 'umd') => (state: State): webpack.RuleSetRule[] => [
+const webpackRules = (module: 'cjs' | 'umd') => (
+  state: State
+): webpack.RuleSetRule[] => [
   {
     test: /\.js$/,
     use: resolveFrom(rootModules(state), 'source-map-loader'),
@@ -81,20 +95,25 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
   target: module === 'cjs' ? 'node' : 'web',
   externals:
     module === 'cjs'
-      ? [
+      ? compact([
           nodeExternals({
             whitelist: ['lodash-es', /^ramda\/es/]
           })
-        ]
+        ])
       : undefined,
   mode: 'production',
-  entry: webpackEntries(state),
+  entry: condTest(state)
+    ? pick(webpackEntries(state), module === 'cjs' ? 'node' : 'browser')
+    : webpackEntries(state),
   devtool: 'source-map',
   output: {
     libraryTarget: module === 'cjs' ? 'commonjs2' : 'umd',
     library: module === 'cjs' ? undefined : camelCase(packageName(state)),
     path: module === 'cjs' ? outputPathCjs(state) : outputPathUmd(state),
-    filename: `[name].js`
+    filename: `[name].js`,
+    devtoolModuleFilenameTemplate: condTest(state)
+      ? '[absolute-resource-path]'
+      : undefined
   },
   module: {
     rules: webpackRules(module)(state)
@@ -129,14 +148,16 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
     plugins: [
       new TsconfigPathsPlugin({
         configFile: tsconfig(state),
-        mainFields: module === 'umd' ? ['module', 'browser', 'main'] : ['module', 'main'],
+        mainFields:
+          module === 'umd' ? ['module', 'browser', 'main'] : ['module', 'main'],
         silent: true
       })
     ],
     symlinks: true,
     extensions: ['.ts', '.js', '.tsx', '.json'],
     modules: [contextModules(state)],
-    mainFields: module === 'umd' ? ['module', 'browser', 'main'] : ['module', 'main']
+    mainFields:
+      module === 'umd' ? ['module', 'browser', 'main'] : ['module', 'main']
   },
   resolveLoader: {
     modules: [rootModules(state)]

@@ -20,7 +20,7 @@ $ npm install -g recce
 $ recce COMMAND
 running command...
 $ recce (-v|--version|version)
-recce/2.1.5 linux-x64 node-v10.16.0
+recce/2.0.0 darwin-x64 node-v12.1.0
 $ recce --help [COMMAND]
 USAGE
   $ recce COMMAND
@@ -33,25 +33,36 @@ USAGE
 <!-- commands -->
 * [`recce build`](#recce-build)
 * [`recce help [COMMAND]`](#recce-help-command)
+* [`recce test`](#recce-test)
 
 ## `recce build`
 
-build TypeScript library
+Bundle the library for publishing.
 
 ```
 USAGE
   $ recce build
 
 OPTIONS
-  -e, --entry=entry         project entry point
-  -h, --help                show CLI help
-  -m, --module=cjs|umd|esm  module code generation (esm is always enabled)
-  -o, --output=output       [default: lib] output directory path
-  -p, --project=project     path to 'tsconfig.json', or to a folder with it
-  --[no-]clean              [default: true] clean output directory
-  --machine-readable        enables JSON output mode
-  --[no-]minimize           [default: true] minimize javascript
-  --stats                   write JSON file(s) with compilation statistics
+  -e, --entry=path          Path to the library entry point(s).
+                            Can be specified multiple times.
+
+  -m, --module=cjs|umd|esm  CommonJS, Universal Module Definition or EcmaScript modules.
+                            EcmaScript modules are always enabled.
+                            Can be specified multiple times.
+
+  -o, --output=directory    Redirect output structure to a directory.
+
+  -p, --project=path        Path to project's configuration file, or to a folder with a 'tsconfig.json'.
+
+  --[no-]clean              Delete the output directory in advance.
+                            Enabled by default.
+
+  --machine-readable        Produce machine readable JSON output.
+
+  --[no-]minimize           Emit minifed JavaScript. Enalbed by default.
+
+  --stats                   Write JSON files with compilation statistics.
 
 EXAMPLES
   $ recce build -p [directory] -m esm -e src/hello.ts
@@ -60,20 +71,57 @@ EXAMPLES
   $ recce build --no-clean --no-minimize -m umd -e src/hello.ts
 ```
 
+_See code: [lib/commands/build.js](https://github.com/escapace/recce/blob/v2.0.0/lib/commands/build.js)_
+
 ## `recce help [COMMAND]`
 
-display help for recce
+Print usage and options.
 
 ```
 USAGE
   $ recce help [COMMAND]
 
 ARGUMENTS
-  COMMAND  command to show help for
+  COMMAND  Command to show help for.
 
 OPTIONS
-  --all  see all commands in CLI
+  --all  See all commands in CLI.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.0/src/commands/help.ts)_
+_See code: [lib/commands/help.js](https://github.com/escapace/recce/blob/v2.0.0/lib/commands/help.js)_
+
+## `recce test`
+
+Run tests on Node.js and in the browser.
+
+```
+USAGE
+  $ recce test
+
+OPTIONS
+  -b, --browser=pattern   Glob pattern that matches test files to run on Node.js.
+                          Can be specified multiple times.
+
+  -n, --node=pattern      Glob pattern that matches test files to run in the browser.
+                          Can be specified multiple times.
+
+  -p, --project=path      Path to project's configuration file, or to a folder with a 'tsconfig.json'.
+
+  --[no-]capture-console  Capture all console output and pipe it to the terminal.
+                          Disabled by default.
+
+  --[no-]coverage         Collect and report test coverage.
+                          Enabled by default.
+
+  --reporter=reporter     Test coverage reporter(s): lcovonly, text, clover, cobertura, html,
+                          json, json-summary, lcov, none, teamcity, text-lcov, text-summary.
+                          Can be specified multiple times.
+
+EXAMPLES
+  $ recce test --browser 'src/**.spec.ts'
+  $ recce test -p [directory] --browser 'src/**.spec.ts' --browser 'test/**.spec.ts'
+  $ recce test -p [directory] --node 'src/**.spec.ts' --node 'test/**.spec.ts'
+```
+
+_See code: [lib/commands/test.js](https://github.com/escapace/recce/blob/v2.0.0/lib/commands/test.js)_
 <!-- commandsstop -->

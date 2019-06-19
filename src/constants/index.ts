@@ -1,41 +1,119 @@
-import { CompilerOptions, LodashOptions, MinifyOptions, NodeOptions, State } from '../types'
+import {
+  CompilerOptions,
+  LodashOptions,
+  MinifyOptions,
+  NodeOptions,
+  Reporter,
+  State
+} from '../types'
 import { flags } from '@oclif/command'
-
 import { DeepPartial } from 'redux'
+
+export const Reporters: Reporter[] = [
+  'lcovonly',
+  'text',
+  'clover',
+  'cobertura',
+  'html',
+  'json',
+  'json-summary',
+  'lcov',
+  'none',
+  'teamcity',
+  'text-lcov',
+  'text-summary'
+]
 
 export const commandFlags = {
   entry: flags.string({
     char: 'e',
-    description: 'project entry point',
+    helpValue: 'path',
+    description: [
+      'Path to the library entry point(s).',
+      'Can be specified multiple times.'
+    ].join('\n'),
     multiple: true,
     required: false
   }),
   output: flags.string({
     char: 'o',
-    description: '[default: lib] output directory path',
+    helpValue: 'directory',
+    description: 'Redirect output structure to a directory.',
     required: false
   }),
   minimize: flags.boolean({
-    description: '[default: true] minimize javascript',
+    description: 'Emit minifed JavaScript. Enalbed by default.',
     allowNo: true
   }),
   stats: flags.boolean({
-    description: 'write JSON file(s) with compilation statistics',
+    description: 'Write JSON files with compilation statistics.',
     default: false
   }),
   clean: flags.boolean({
-    description: '[default: true] clean output directory',
+    description: [
+      'Delete the output directory in advance.',
+      'Enabled by default.'
+    ].join('\n'),
     allowNo: true
   }),
   module: flags.string({
     char: 'm',
-    description: 'module code generation (esm is always enabled)',
+    description: [
+      'CommonJS, Universal Module Definition or EcmaScript modules.',
+      'EcmaScript modules are always enabled.',
+      'Can be specified multiple times.'
+    ].join('\n'),
     multiple: true,
     options: ['cjs', 'umd', 'esm'],
     required: false
   }),
+  browser: flags.string({
+    helpValue: 'pattern',
+    char: 'b',
+    description: [
+      'Glob pattern that matches test files to run on Node.js.',
+      'Can be specified multiple times.'
+    ].join('\n'),
+    multiple: true,
+    required: false
+  }),
+  node: flags.string({
+    helpValue: 'pattern',
+    char: 'n',
+    description: [
+      'Glob pattern that matches test files to run in the browser.',
+      'Can be specified multiple times.'
+    ].join('\n'),
+    multiple: true,
+    required: false
+  }),
+  coverage: flags.boolean({
+    description: [
+      'Collect and report test coverage.',
+      'Enabled by default.'
+    ].join('\n'),
+    allowNo: true
+  }),
+  'capture-console': flags.boolean({
+    description: [
+      'Capture all console output and pipe it to the terminal.',
+      'Disabled by default.'
+    ].join('\n'),
+
+    allowNo: true
+  }),
+  reporter: flags.string({
+    description: [
+      `Test coverage reporter(s): ${Reporters.slice(0, 5).join(', ')},`,
+      `${Reporters.slice(5).join(', ')}.`,
+      'Can be specified multiple times.'
+    ].join('\n'),
+    // options: Reporters,
+    multiple: true,
+    required: false
+  }),
   'machine-readable': flags.boolean({
-    description: 'enables JSON output mode',
+    description: 'Produce machine readable JSON output.',
     default: false
   })
 }
@@ -129,6 +207,7 @@ export const INITIAL_STATE: DeepPartial<State> = {
     },
     minify: MINIFY_OPTIONS,
     node: WEBPACK_NODE,
-    compilerOptions: TS_COMPILER_OPTIONS
+    compilerOptions: TS_COMPILER_OPTIONS,
+    test: { coverage: false }
   }
 }
