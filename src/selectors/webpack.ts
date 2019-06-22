@@ -4,7 +4,7 @@ import nodeExternals = require('webpack-node-externals')
 import resolveFrom from 'resolve-from'
 import { DoneHookWebpackPlugin, FilterWebpackPlugin } from '../plugins'
 import { createSelector } from 'reselect'
-import { relative, resolve } from 'path'
+import { join, relative, resolve } from 'path'
 import { camelCase, compact, map, mapValues, pick } from 'lodash'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 
@@ -103,9 +103,20 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
       : undefined,
   mode: 'production',
   entry: condTest(state)
-    ? pick(webpackEntries(state), module === 'cjs' ? 'node' : 'browser')
+    ? mapValues(
+        pick(webpackEntries(state), module === 'cjs' ? 'node' : 'browser'),
+        e => [
+          module === 'cjs'
+            ? join(state.oclifConfig.root, 'public/node-source-map-support.js')
+            : join(
+                state.oclifConfig.root,
+                'public/browser-source-map-support.js'
+              ),
+          ...e
+        ]
+      )
     : webpackEntries(state),
-  devtool: 'source-map',
+  devtool: condTest(state) ? 'inline-source-map' : 'source-map',
   output: {
     libraryTarget: module === 'cjs' ? 'commonjs2' : 'umd',
     library: module === 'cjs' ? undefined : camelCase(packageName(state)),
@@ -145,6 +156,28 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
     })
   ]),
   resolve: {
+    alias: {
+      ...(condTest(state)
+        ? {
+            'source-map-support':
+              module === 'cjs'
+                ? resolveFrom(
+                    rootModules(state),
+                    'source-map-support/source-map-support.js'
+                  )
+                : resolveFrom(
+                    rootModules(state),
+                    'source-map-support/browser-source-map-support.js'
+                  ),
+            ...(module === 'cjs'
+              ? {
+                  'buffer-from': resolveFrom(rootModules(state), 'buffer-from'),
+                  'source-map': resolveFrom(rootModules(state), 'source-map')
+                }
+              : {})
+          }
+        : {})
+    },
     plugins: [
       new TsconfigPathsPlugin({
         configFile: tsconfig(state),

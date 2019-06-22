@@ -57,10 +57,6 @@ interface Result {
 
 const testNode = async (props: string[]): Promise<Result> => {
   const source = `#!${process.execPath}
-  require('${resolveFrom(
-    rootModules(store.getState()),
-    'source-map-support/register'
-  )}')
 
   const Mocha = require('${resolveFrom(
     rootModules(store.getState()),
