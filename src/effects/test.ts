@@ -298,8 +298,12 @@ export const test = async (flags: {
 
   const nonTestFiles = without(files, ...testFiles.browser, ...testFiles.node)
 
-  if (isEmpty(testFiles.node) && isEmpty(testFiles.browser)) {
-    throw new Error('No test files found')
+  if (isEmpty(testFiles.node) && enabled.node) {
+    throw new Error('No test files found for Node.js')
+  }
+
+  if (isEmpty(testFiles.browser) && enabled.browser) {
+    throw new Error('No test files found for browser')
   }
 
   const invalidReporters = difference(flags.reporter, Reporters)
@@ -352,6 +356,7 @@ export const test = async (flags: {
   )
 
   await build()
+
   const results = buildResults(store.getState())
 
   const compiledTestFiles = (target: 'node' | 'browser') =>
