@@ -43,11 +43,10 @@ cache:
 notifications:
   email: false
 node_js:
-- node
+- current
 jobs:
   include:
   - stage: release
-    node_js: lts/*
     deploy:
       provider: script
       skip_cleanup: true
