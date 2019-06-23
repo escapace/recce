@@ -20,7 +20,7 @@ $ npm install -g recce
 $ recce COMMAND
 running command...
 $ recce (-v|--version|version)
-recce/3.1.5 linux-x64 node-v10.16.0
+recce/3.2.0 linux-x64 node-v12.4.0
 $ recce --help [COMMAND]
 USAGE
   $ recce COMMAND
@@ -95,23 +95,26 @@ USAGE
   $ recce test
 
 OPTIONS
-  -b, --browser=pattern   Glob pattern that matches test files to run on Node.js.
-                          Can be specified multiple times.
+  -b, --browser=pattern       Glob pattern that matches test files to run on Node.js.
+                              Can be specified multiple times.
 
-  -n, --node=pattern      Glob pattern that matches test files to run in the browser.
-                          Can be specified multiple times.
+  -n, --node=pattern          Glob pattern that matches test files to run in the browser.
+                              Can be specified multiple times.
 
-  -p, --project=path      Path to project's configuration file, or to a folder with a 'tsconfig.json'.
+  -p, --project=path          Path to project's configuration file, or to a folder with a 'tsconfig.json'.
 
-  --[no-]capture-console  Capture all console output and pipe it to the terminal.
-                          Disabled by default.
+  --[no-]capture-console      Capture all console output and pipe it to the terminal.
+                              Disabled by default.
 
-  --[no-]coverage         Collect and report test coverage.
-                          Enabled by default.
+  --[no-]coverage             Collect and report test coverage.
+                              Enabled by default.
 
-  --reporter=reporter     Test coverage reporter(s): lcovonly, text, clover, cobertura, html,
-                          json, json-summary, lcov, none, teamcity, text-lcov, text-summary.
-                          Can be specified multiple times.
+  --coverage-exclude=pattern  Glob pattern that matches files to execlude from coverage.
+                              Can be specified multiple times.
+
+  --reporter=reporter         Test coverage reporter(s): lcovonly, text, clover, cobertura, html,
+                              json, json-summary, lcov, none, teamcity, text-lcov, text-summary.
+                              Can be specified multiple times.
 
 EXAMPLES
   $ recce test --browser 'src/**.spec.ts'
