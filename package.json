@@ -120,7 +120,7 @@
     "tslint-microsoft-contrib": "6.2.0"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.16.0"
   },
   "files": [
     ".oclif.manifest.json",

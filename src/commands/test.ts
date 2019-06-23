@@ -21,7 +21,8 @@ export default class Test extends Command {
       'node',
       'reporter',
       'coverage',
-      'capture-console'
+      'capture-console',
+      'coverage-exclude'
     ])
   }
 

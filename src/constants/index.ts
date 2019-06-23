@@ -94,6 +94,15 @@ export const commandFlags = {
     ].join('\n'),
     allowNo: true
   }),
+  'coverage-exclude': flags.string({
+    helpValue: 'pattern',
+    description: [
+      'Glob pattern that matches files to execlude from coverage.',
+      'Can be specified multiple times.'
+    ].join('\n'),
+    multiple: true,
+    required: false
+  }),
   'capture-console': flags.boolean({
     description: [
       'Capture all console output and pipe it to the terminal.',
@@ -208,6 +217,6 @@ export const INITIAL_STATE: DeepPartial<State> = {
     minify: MINIFY_OPTIONS,
     node: WEBPACK_NODE,
     compilerOptions: TS_COMPILER_OPTIONS,
-    test: { coverage: false }
+    test: { coverage: false, coverageExclude: [] }
   }
 }

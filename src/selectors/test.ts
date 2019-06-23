@@ -22,6 +22,11 @@ export const testOutput = createSelector(
   ({ output }) => output
 )
 
+export const coverageExclude = createSelector(
+  testConfig,
+  config => config.coverageExclude
+)
+
 const istanbulExclude = createSelector(
   entries,
   rootDir,

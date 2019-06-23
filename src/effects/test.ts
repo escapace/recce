@@ -17,16 +17,17 @@ import { build } from './build'
 import { Reporters } from '../constants'
 import { Reporter } from '../types'
 
+import istanbulReports from 'istanbul-reports'
 import {
   buildResults,
   captureConsole,
   condCoverage,
   context,
+  coverageExclude,
   rootModules,
   testOutput,
   tsconfig
 } from '../selectors'
-import { fork } from 'child_process'
 import {
   compilerOptions,
   parseJsonConfig,
@@ -38,7 +39,7 @@ import { SET_BUILD_OPTIONS, SET_TEST_CONFIG } from '../actions'
 import { store } from '../store'
 import istanbulCoverage, { FileCoverageData } from 'istanbul-lib-coverage'
 import istanbulReport from 'istanbul-lib-report'
-import istanbulReports from 'istanbul-reports'
+import { fork } from 'child_process'
 import istanbulLibSourceMaps from 'istanbul-lib-source-maps'
 import Karma from 'karma'
 import micromatch from 'micromatch'
@@ -241,6 +242,15 @@ const reportCoverage = async (
 
     remappedCoverageMap.filter(path => includes(files, path))
 
+    const exclude = coverageExclude(store.getState())
+
+    if (!isEmpty(exclude)) {
+      remappedCoverageMap.filter(
+        path =>
+          !micromatch.any(relative(context(store.getState()), path), exclude)
+      )
+    }
+
     const tree = istanbulReport.summarizers.pkg(remappedCoverageMap)
 
     reporters.forEach(reporter =>
@@ -250,18 +260,20 @@ const reportCoverage = async (
 }
 
 export const test = async (flags: {
+  'capture-console': boolean
+  'coverage-exclude': string[]
   browser: string[]
+  coverage: boolean
   node: string[]
   reporter: string[]
-  coverage: boolean
-  'capture-console': boolean
 }) => {
   defaults(flags, {
+    'capture-console': false,
+    'coverage-exclude': [],
     browser: [],
-    node: [],
     coverage: true,
-    reporter: ['text-summary'],
-    'capture-console': false
+    node: [],
+    reporter: ['text-summary']
   })
 
   const parsedJsonConfig = parseJsonConfig(tsconfig(store.getState()))
@@ -327,6 +339,7 @@ export const test = async (flags: {
     SET_TEST_CONFIG({
       output,
       coverage: flags.coverage,
+      coverageExclude: flags['coverage-exclude'],
       captureConsole: flags['capture-console']
     })
   )

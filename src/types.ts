@@ -117,6 +117,7 @@ export interface BuildResult {
 }
 
 export interface TestConfig {
+  coverageExclude: string[]
   coverage: boolean
   output: string
   captureConsole: boolean

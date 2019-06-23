@@ -31,6 +31,11 @@ export { webpackConfiguration, webpackEntries } from './webpack'
 
 export { gulpBabelOptions } from './babel'
 
-export { condCoverage, testOutput, captureConsole } from './test'
+export {
+  condCoverage,
+  testOutput,
+  captureConsole,
+  coverageExclude
+} from './test'
 
 export { lodashId } from './lodash'
