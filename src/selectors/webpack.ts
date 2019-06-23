@@ -13,6 +13,7 @@ import { MinifyOptions, State } from '../types'
 import webpack = require('webpack')
 
 import {
+  condBuild,
   condMinimize,
   condTest,
   condWatch,
@@ -101,7 +102,7 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
           })
         ])
       : undefined,
-  mode: 'production',
+  mode: condBuild(state) ? 'production' : 'development',
   entry: condTest(state)
     ? mapValues(
         pick(webpackEntries(state), module === 'cjs' ? 'node' : 'browser'),
