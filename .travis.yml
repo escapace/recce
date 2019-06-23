@@ -43,7 +43,7 @@ cache:
 notifications:
   email: false
 node_js:
-- current
+- 12.4.0
 jobs:
   include:
   - stage: release
