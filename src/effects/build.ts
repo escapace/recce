@@ -35,8 +35,7 @@ import {
   map,
   some,
   toLower,
-  uniq,
-  without
+  uniq
 } from 'lodash'
 
 const spinner = () => {
@@ -171,24 +170,22 @@ export const build = async () => {
     .then(gulpBuild)
     .then(() => update('Completed the ES Module build'))
     .then(() =>
-      Promise.all(
-        map(without(modules(store.getState()), 'esm'), async mod => {
-          // tslint:disable-next-line: no-any
-          const p: Promise<any> = condBuildWithErrors(store.getState())
-            ? Promise.resolve()
-            : webpackBuild(mod as 'cjs' | 'umd')
-
-          await p
-
-          update(
-            mod === 'cjs'
-              ? 'Completed the CommonJS build'
-              : 'Completed the UMD (Universal Module Definition) build'
+      !condBuildWithErrors(store.getState()) &&
+      includes(modules(store.getState()), 'cjs')
+        ? webpackBuild('cjs' as 'cjs').then(() =>
+            update('Completed the CommonJS build')
           )
-        })
-      )
+        : undefined
     )
-    .then(writeStats)
+    .then(() =>
+      !condBuildWithErrors(store.getState()) &&
+      includes(modules(store.getState()), 'umd')
+        ? webpackBuild('umd' as 'umd').then(() =>
+            update('Completed the UMD (Universal Module Definition) build')
+          )
+        : undefined
+    )
+    .then(() => writeStats)
     .then(() => {
       const buildModules = modules(store.getState())
 
