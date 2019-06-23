@@ -2,11 +2,12 @@ import TerserPlugin = require('terser-webpack-plugin')
 import lodashPlugin = require('lodash-webpack-plugin')
 import nodeExternals = require('webpack-node-externals')
 import resolveFrom from 'resolve-from'
-import { DoneHookWebpackPlugin, FilterWebpackPlugin } from '../plugins'
+import { FilterWebpackPlugin } from '../plugins'
 import { createSelector } from 'reselect'
-import { join, relative, resolve } from 'path'
+import { relative, resolve } from 'path'
 import { camelCase, compact, map, mapValues, pick } from 'lodash'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
+import { readFileSync } from 'fs'
 
 import { MinifyOptions, State } from '../types'
 
@@ -16,7 +17,6 @@ import {
   condBuild,
   condMinimize,
   condTest,
-  condWatch,
   context,
   contextModules,
   entries,
@@ -104,18 +104,7 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
       : undefined,
   mode: condBuild(state) ? 'production' : 'development',
   entry: condTest(state)
-    ? mapValues(
-        pick(webpackEntries(state), module === 'cjs' ? 'node' : 'browser'),
-        e => [
-          module === 'cjs'
-            ? join(state.oclifConfig.root, 'public/node-source-map-support.js')
-            : join(
-                state.oclifConfig.root,
-                'public/browser-source-map-support.js'
-              ),
-          ...e
-        ]
-      )
+    ? pick(webpackEntries(state), module === 'cjs' ? 'node' : 'browser')
     : webpackEntries(state),
   devtool: condTest(state) ? 'inline-source-map' : 'source-map',
   output: {
@@ -141,7 +130,25 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
     //   showHelp: false,
     //   emitError: true
     // }),
-    condWatch(state) ? new DoneHookWebpackPlugin() : undefined,
+    condTest(state)
+      ? new webpack.BannerPlugin({
+          banner:
+            module === 'cjs'
+              ? `require("${resolveFrom(
+                  rootModules(state),
+                  'source-map-support/register'
+                )}");`
+              : `${readFileSync(
+                  resolveFrom(
+                    rootModules(state),
+                    'source-map-support/browser-source-map-support.js'
+                  )
+                ).toString()};sourceMapSupport.install();`,
+          raw: true,
+          entryOnly: true
+        })
+      : undefined,
+    // condWatch(state) ? new DoneHookWebpackPlugin() : undefined,
     // new webpack.NoEmitOnErrorsPlugin(),
     condLodash(state) ? new lodashPlugin(lodashOptions(state)) : undefined,
     condMinimize(state)
@@ -158,24 +165,10 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
   ]),
   resolve: {
     alias: {
-      ...(condTest(state)
+      ...(condTest(state) && module === 'umd'
         ? {
-            'source-map-support':
-              module === 'cjs'
-                ? resolveFrom(
-                    rootModules(state),
-                    'source-map-support/source-map-support.js'
-                  )
-                : resolveFrom(
-                    rootModules(state),
-                    'source-map-support/browser-source-map-support.js'
-                  ),
-            ...(module === 'cjs'
-              ? {
-                  'buffer-from': resolveFrom(rootModules(state), 'buffer-from'),
-                  'source-map': resolveFrom(rootModules(state), 'source-map')
-                }
-              : {})
+            'base64-js': resolveFrom(rootModules(state), 'base64-js'),
+            ieee754: resolveFrom(rootModules(state), 'ieee754')
           }
         : {})
     },

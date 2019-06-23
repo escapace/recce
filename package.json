@@ -125,8 +125,7 @@
   "files": [
     ".oclif.manifest.json",
     "/bin",
-    "/lib",
-    "public"
+    "/lib"
   ],
   "homepage": "https://github.com/escapace/recce",
   "husky": {

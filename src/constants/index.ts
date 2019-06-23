@@ -130,7 +130,7 @@ const TS_COMPILER_OPTIONS: CompilerOptions = {
 const WEBPACK_NODE: NodeOptions = {
   console: false,
   global: false,
-  process: false,
+  process: true,
   __filename: false,
   __dirname: false,
   Buffer: false,
