@@ -185,7 +185,7 @@ export const build = async () => {
           )
         : undefined
     )
-    .then(() => writeStats)
+    .then(writeStats)
     .then(() => {
       const buildModules = modules(store.getState())
 
