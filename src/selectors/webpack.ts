@@ -77,7 +77,7 @@ const webpackRules = (module: 'cjs' | 'umd') => (
   },
   {
     test: /\.js$/,
-    exclude: /tslib/,
+    exclude: /tslib|lodash/,
     use: [
       {
         loader: resolveFrom(rootModules(state), 'babel-loader'),

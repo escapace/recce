@@ -147,28 +147,31 @@ const WEBPACK_NODE: NodeOptions = {
 }
 
 const LODASH_OPTIONS: LodashOptions = {
-  cloning: true,
-  caching: true,
   collections: true,
-  unicode: true,
-  memoizing: true,
-  coercions: true,
-  flattening: true,
-  paths: true
+  exotics: true
+  // cloning: true,
+  // caching: true,
+  // collections: true,
+  // unicode: true,
+  // memoizing: true,
+  // coercions: true,
+  // flattening: true,
+  // paths: true
 }
 
 const MINIFY_OPTIONS: MinifyOptions = {
-  ecma: undefined,
-  warnings: false,
-  parse: {},
   compress: {
+    passes: 2,
+    defaults: true,
+    pure_getters: true,
+    toplevel: true,
     arrows: true,
     collapse_vars: true,
     comparisons: true,
     computed_props: true,
-    hoist_funs: true,
-    hoist_props: true,
-    hoist_vars: true,
+    // hoist_funs: true,
+    // hoist_props: true,
+    // hoist_vars: true,
     inline: true,
     loops: true,
     negate_iife: true,
@@ -176,29 +179,17 @@ const MINIFY_OPTIONS: MinifyOptions = {
     reduce_funcs: true,
     reduce_vars: true,
     switches: true,
-    toplevel: true,
     typeofs: true,
-
-    // a few flags with noticable gains/speed ratio
-    // numbers based on out of the box vendor bundle
     booleans: true, // 0.7kb
     if_return: true, // 0.4kb
     sequences: true, // 0.7kb
     unused: true, // 2.3kb
-
-    // required features to drop conditional branches
     conditionals: true,
     dead_code: true,
     evaluate: true
   },
-  mangle: true,
-  module: false,
-  output: undefined,
-  toplevel: false,
-  nameCache: undefined,
-  ie8: false,
-  keep_classnames: undefined,
-  keep_fnames: false,
+  module: true,
+  toplevel: true,
   safari10: true
 }
 
