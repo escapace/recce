@@ -31,7 +31,7 @@
     "gulp-tap": "2.0.0",
     "gulp-typescript": "5.0.1",
     "gzip-size": "5.1.1",
-    "immer": "3.2.0",
+    "immer": "4.0.0",
     "istanbul-lib-coverage": "2.0.5",
     "istanbul-lib-report": "2.0.8",
     "istanbul-lib-source-maps": "3.0.6",
