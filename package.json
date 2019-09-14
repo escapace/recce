@@ -45,7 +45,7 @@
     "merge2": "1.2.4",
     "micromatch": "4.0.2",
     "mocha": "6.2.0",
-    "node-object-hash": "1.4.2",
+    "node-object-hash": "2.0.0",
     "normalize-package-data": "2.5.0",
     "ora": "3.4.0",
     "pkg-up": "3.1.0",
