@@ -47,7 +47,7 @@
     "mocha": "6.2.0",
     "node-object-hash": "2.0.0",
     "normalize-package-data": "2.5.0",
-    "ora": "3.4.0",
+    "ora": "4.0.1",
     "pkg-up": "3.1.0",
     "pretty-bytes": "5.3.0",
     "puppeteer": "1.20.0",
