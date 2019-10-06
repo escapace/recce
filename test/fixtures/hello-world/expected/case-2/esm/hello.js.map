@@ -1,1 +1,1 @@
-{"version":3,"sources":["src/hello.ts"],"names":["bang","hello","name"],"mappings":";AACA,SAASA,IAAT,QAAqB,QAArB;AAEA,OAAO,MAAMC,KAAK,GAAIC,IAAD,IAAkB,SAAS,YAAWA,IAAX,CAAgB,GAAGF,IAAI,EAAhE","file":"hello.js","sourceRoot":"../.."}
+{"version":3,"sources":["../../src/hello.ts"],"names":[],"mappings":";AACA,SAAS,IAAT,QAAqB,QAArB;AAEA,OAAO,MAAM,KAAK,GAAI,IAAD,IAAkB,SAAS,YAAW,IAAX,CAAgB,GAAG,IAAI,EAAhE","sourceRoot":""}

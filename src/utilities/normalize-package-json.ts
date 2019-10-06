@@ -1,4 +1,4 @@
-import normalizePackage = require('normalize-package-data')
+import normalizePackage from 'normalize-package-data'
 
 import { PackageJson } from '../types'
 
@@ -6,7 +6,7 @@ import { noop } from 'lodash'
 
 export const normalizePackageJson = (
   data: PackageJson,
-  strict: boolean = true
+  strict = true
 ): PackageJson => {
   normalizePackage(data, noop, strict)
 

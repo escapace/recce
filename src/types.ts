@@ -1,28 +1,28 @@
-/* tslint:disable no-any */
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnyAction } from 'redux'
 import { IConfig as OclifConfig } from '@oclif/config'
 import { Package } from 'normalize-package-data'
 import { Node as NodeOptions } from 'webpack'
 import { Options as LodashOptions } from 'lodash-webpack-plugin'
 import { MinifyOptions } from 'terser-webpack-plugin'
+import ts from 'typescript'
 // import { CompilerOptions } from 'typescript'
 
-export interface TypescriptError {
-  code: number
-  content: string
-  severity: 'error' | 'warning'
-  file: string
-  line: number
-  character: number
-  context: string
-}
+// export interface TypescriptError {
+//   code: number
+//   content: string
+//   severity: 'error' | 'warning'
+//   file: string
+//   line: number
+//   character: number
+//   context: string
+// }
 
-export interface TypescriptErrorRecord {
-  modules: BuildModule[]
-  error: TypescriptError
-  hash: string
-}
+// export interface TypescriptErrorRecord {
+//   modules: BuildModule[]
+//   error: TypescriptError
+//   hash: string
+// }
 
 export interface CompilerOptions {
   [key: string]: any
@@ -55,20 +55,19 @@ export interface BuildReports {
   esm: BuildReport
 }
 
-export interface FileSource {
-  file: string
-  source: string
-}
+// export interface FileSource {
+//   file: string
+//   source: string
+// }
 
 export interface Prefix {
   root: string
   context: string
 }
 
-export interface Options {
+export interface BuildConfig {
   mode: Mode
-  rootDir?: string
-  compilerOptions: CompilerOptions
+  // compilerOptions: CompilerOptions
   entries: { [key: string]: string[] }
   modules: BuildModules
   outputPath: string
@@ -86,9 +85,14 @@ export type Mode = 'build' | 'test'
 
 export interface State {
   oclifConfig: OclifConfig
-  options: Options
+  buildConfig: BuildConfig
+  testConfig: TestConfig
+  tsConfig: Omit<ts.ParsedCommandLine, 'options'> & {
+    options: CompilerOptions
+    rootDir: string
+  }
   runtime: {
-    errors: { [key: string]: TypescriptErrorRecord }
+    // errors: { [key: string]: any }
     files: { [key: string]: string }
     build: BuildResult[]
   }
@@ -100,7 +104,6 @@ export interface State {
       options: LodashOptions
     }
     compilerOptions: CompilerOptions
-    test: TestConfig
   }
 }
 

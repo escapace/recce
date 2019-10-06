@@ -1,50 +1,30 @@
 import path from 'path'
-import webpack = require('webpack')
 import { BuildResult } from '../types'
-import { compact, concat, filter, isNull, isUndefined, map, noop } from 'lodash'
-import { webpackConfiguration } from '../selectors'
+import { compact, concat, filter, isNull, map, get, includes } from 'lodash'
+import { webpackConfiguration, modules } from '../selectors'
 import { store } from '../store'
 import { BUILD_RESULT } from '../actions'
+import webpack = require('webpack')
 
-export const webpackBuild = async (
-  module: 'cjs' | 'umd'
-): Promise<{
-  compiler: webpack.Compiler
-  close: () => void
-  invalidate: () => void
-}> => {
-  const callback = (result: BuildResult) => store.dispatch(BUILD_RESULT(result))
+export const webpackBuild = async () => {
+  const mod = modules(store.getState())
 
-  const configuration = webpackConfiguration(module)(store.getState())
+  const configuration = compact([
+    includes(mod, 'cjs')
+      ? webpackConfiguration('cjs')(store.getState())
+      : undefined,
+    includes(mod, 'umd')
+      ? webpackConfiguration('umd')(store.getState())
+      : undefined
+  ])
 
-  const compiler = webpack(configuration)
+  return new Promise<BuildResult[]>(resolve => {
+    webpack(configuration, (err, _stats) => {
+      const statsArray: webpack.Stats[] = get(_stats, 'stats')
 
-  const method = (handler: webpack.ICompiler.Handler) => {
-    // const state = store.getState()
-
-    // if (condBuild(state)) {
-    return compiler.run(handler) as undefined
-    // } else if (condWatch(state)) {
-    //   return compiler.watch(
-    //     {
-    //       aggregateTimeout: 300,
-    //       poll: true
-    //     },
-    //     handler
-    //   )
-    // }
-  }
-
-  return new Promise<{
-    compiler: webpack.Compiler
-    close: () => void
-    invalidate: () => void
-  }>(resolve => {
-    const watching: webpack.Compiler.Watching | undefined = method(
-      // tslint:disable-next-line no-any
-      (err: null | Error & { details?: string }, stats) => {
+      const results = map(statsArray, stats => {
         const result: BuildResult = {
-          module,
+          module: get(stats, 'compilation.name'),
           assets: [],
           errors: [],
           hasErrors: false,
@@ -66,16 +46,8 @@ export const webpackBuild = async (
               value.toString()
             )
           } else {
-            result.errors = concat(compact([err.message, err.details]))
+            result.errors = concat(compact([err.message, get(err, 'details')]))
           }
-
-          resolve({
-            close: isUndefined(watching) ? noop : watching.close,
-            compiler: compiler,
-            invalidate: isUndefined(watching) ? noop : watching.invalidate
-          })
-
-          callback(result)
         } else {
           result.assets = filter(
             map(info.assets, asset =>
@@ -83,16 +55,14 @@ export const webpackBuild = async (
             ),
             p => !/\.js\.map/.test(p)
           )
-
-          resolve({
-            close: isUndefined(watching) ? noop : watching.close,
-            compiler: compiler,
-            invalidate: isUndefined(watching) ? noop : watching.invalidate
-          })
-
-          callback(result)
         }
-      }
-    )
+
+        return result
+      })
+
+      results.forEach(result => store.dispatch(BUILD_RESULT(result)))
+
+      resolve(results)
+    })
   })
 }

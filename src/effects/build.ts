@@ -1,6 +1,6 @@
 import { BuildModule, BuildModules } from '../types'
-import { gulpBuild } from './gulp'
-import { SET_BUILD_OPTIONS } from '../actions'
+import { tsc } from './tsc'
+import { SET_BUILD_CONFIG } from '../actions'
 import {
   condBuild,
   condBuildWithErrors,
@@ -11,11 +11,7 @@ import {
   machineReadable,
   modules
 } from '../selectors'
-import {
-  clean,
-  compilerOptions as parseCompilerOptions,
-  realpathAsync
-} from '../utilities'
+import { clean, realpathAsync, parseTsconfig } from '../utilities'
 import path from 'path'
 import { store } from '../store'
 import { webpackBuild } from './webpack'
@@ -32,6 +28,7 @@ import {
   isEmpty,
   isString,
   isUndefined,
+  forEach,
   map,
   some,
   toLower,
@@ -51,8 +48,8 @@ const spinner = () => {
         color: 'white'
       }).start()
 
-  const update = (text: string) => {
-    const success = !condBuildWithErrors(store.getState())
+  const update = (text: string, override = true) => {
+    const success = !condBuildWithErrors(store.getState()) && override
 
     if (instance !== null) {
       instance.stopAndPersist({
@@ -88,7 +85,6 @@ export interface BuildFlags {
 
 export const setup = async (flags: BuildFlags) => {
   const entries: string[] = await Promise.all(
-    // tslint:disable-next-line no-unnecessary-callback-wrapper
     map(isUndefined(flags.entry) ? [] : uniq(compact(flags.entry)), file =>
       realpathAsync(file)
     )
@@ -136,18 +132,22 @@ export const setup = async (flags: BuildFlags) => {
   const _clean = isUndefined(flags.clean) ? true : flags.clean
   const minimize = isUndefined(flags.minimize) ? true : flags.minimize
 
-  const compilerOptions = await parseCompilerOptions()
+  await parseTsconfig()
 
-  if (!includes(['es6', 'es2015', 'esnext'], toLower(compilerOptions.module))) {
+  if (
+    !includes(
+      ['es6', 'es2015', 'esnext'],
+      toLower(store.getState().tsConfig.options.module)
+    )
+  ) {
     throw new Error(
       "The 'module' in compiler options must be one of es6, es2015 or esnext"
     )
   }
 
   store.dispatch(
-    SET_BUILD_OPTIONS({
+    SET_BUILD_CONFIG({
       clean: _clean,
-      compilerOptions,
       entries: fromPairs(map(entries, file => [path.parse(file).name, [file]])),
       minimize,
       outputPath,
@@ -167,22 +167,26 @@ export const build = async () => {
         update('Cleaned the output directory')
       }
     })
-    .then(gulpBuild)
+    .then(tsc)
     .then(() => update('Completed the ES Module build'))
     .then(() =>
       !condBuildWithErrors(store.getState()) &&
-      includes(modules(store.getState()), 'cjs')
-        ? webpackBuild('cjs' as 'cjs').then(() =>
-            update('Completed the CommonJS build')
-          )
-        : undefined
-    )
-    .then(() =>
-      !condBuildWithErrors(store.getState()) &&
-      includes(modules(store.getState()), 'umd')
-        ? webpackBuild('umd' as 'umd').then(() =>
-            update('Completed the UMD (Universal Module Definition) build')
-          )
+      (includes(modules(store.getState()), 'cjs') ||
+        includes(modules(store.getState()), 'umd'))
+        ? webpackBuild().then(results => {
+            forEach(results, result => {
+              if (result.module === 'cjs') {
+                update(`Completed the CommonJS build`, !result.hasErrors)
+              }
+
+              if (result.module === 'umd') {
+                update(
+                  `Completed the UMD (Universal Module Definition) build`,
+                  !result.hasErrors
+                )
+              }
+            })
+          })
         : undefined
     )
     .then(writeStats)

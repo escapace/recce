@@ -1,4 +1,4 @@
-import { statAsync } from './statAsync'
+import { statAsync } from './stat-async'
 
 export const isDirectory = async (
   file: string

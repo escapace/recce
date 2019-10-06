@@ -1,5 +1,4 @@
-/* tslint:disable no-console strict-boolean-expressions */
-
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { compare as c } from 'dir-compare'
 import { format } from 'util'
 import { isUndefined } from 'lodash'
@@ -32,7 +31,14 @@ export const compare = async (a: string, b: string) =>
           const name2 = entry.name2 ? entry.name2 : ''
 
           if (state !== '==') {
-            error += format('%s(%s) %s %s(%s)\n', name1, entry.type1, state, name2, entry.type2)
+            error += format(
+              '%s(%s) %s %s(%s)\n',
+              name1,
+              entry.type1,
+              state,
+              name2,
+              entry.type2
+            )
           }
         })
       }

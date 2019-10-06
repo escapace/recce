@@ -7,6 +7,7 @@ export default class HelpCommand extends Command {
   public static flags = {
     all: flags.boolean({ description: 'See all commands in CLI.' })
   }
+
   public static args = [
     {
       name: 'command',
@@ -14,10 +15,10 @@ export default class HelpCommand extends Command {
       description: 'Command to show help for.'
     }
   ]
+
   public static strict = false
 
   public async run() {
-    // tslint:disable-next-line: no-shadowed-variable
     const { flags, argv } = this.parse(HelpCommand)
     const help = new Help(this.config, { all: flags.all })
     help.showHelp(argv)

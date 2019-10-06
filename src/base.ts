@@ -1,13 +1,13 @@
-import findNpmPerfix = require('find-npm-prefix')
+import findNpmPerfix from 'find-npm-prefix'
 import { Command, flags } from '@oclif/command'
 import { State } from './types'
 import { Store } from 'redux'
 import { filter, isUndefined } from 'lodash'
 import { dirname, join, resolve } from 'path'
-import { packageJson } from './utilities/packageJson'
-import { isFile } from './utilities/isFile'
-import { isDirectory } from './utilities/isDirectory'
-import { realpathAsync } from './utilities/realpathAsync'
+import { packageJson } from './utilities/package-json'
+import { isFile } from './utilities/is-file'
+import { isDirectory } from './utilities/is-directory'
+import { realpathAsync } from './utilities/realpath-async'
 import { store } from './store'
 
 import {
@@ -34,7 +34,7 @@ export default abstract class extends Command {
   public store: Store<State> = store
 
   public async init() {
-    // tslint:disable-next-line no-any no-shadowed-variable
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { flags } = this.parse(this.constructor as any)
 
     store.dispatch(RESET(undefined))

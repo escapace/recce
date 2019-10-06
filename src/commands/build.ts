@@ -1,5 +1,3 @@
-/* tslint:disable no-unsafe-any */
-
 import Command from '../base'
 import { SET_MODE } from '../actions'
 import { pick } from 'lodash'
@@ -31,7 +29,6 @@ export default class Build extends Command {
   public static args = []
 
   public async run() {
-    // tslint:disable-next-line no-shadowed-variable
     const { flags } = this.parse(Build)
 
     this.store.dispatch(SET_MODE('build'))

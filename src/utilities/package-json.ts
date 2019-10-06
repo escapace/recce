@@ -1,9 +1,9 @@
-import pkgUp = require('pkg-up')
+import pkgUp from 'pkg-up'
 import { PackageJson } from '../types'
 import { isNull } from 'lodash'
-import { normalizePackageJson } from './normalizePackageJson'
-import { readFileAsync } from './readFileAsync'
-import { isDirectory } from './isDirectory'
+import { normalizePackageJson } from './normalize-package-json'
+import { readFileAsync } from './read-file-async'
+import { isDirectory } from './is-directory'
 
 export const packageJson = async (
   cwd: string
@@ -21,7 +21,7 @@ export const packageJson = async (
 
   if (!isNull(path)) {
     return {
-      path: path,
+      path,
       content: normalizePackageJson(
         JSON.parse(await readFileAsync(path, 'utf8'))
       )

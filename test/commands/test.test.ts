@@ -1,5 +1,3 @@
-/* tslint:disable no-console */
-
 import { expect, test } from '@oclif/test'
 import { join, resolve } from 'path'
 import { readFileAsync } from '../../src/utilities'

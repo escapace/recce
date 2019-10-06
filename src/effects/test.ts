@@ -18,24 +18,27 @@ import { Reporters } from '../constants'
 import { Reporter } from '../types'
 
 import istanbulReports from 'istanbul-reports'
+
 import {
   buildResults,
   captureConsole,
   condCoverage,
   context,
+  contextModules,
   coverageExclude,
   rootModules,
   testOutput,
-  tsconfig
+  tsFiles
 } from '../selectors'
+
 import {
-  compilerOptions,
-  parseJsonConfig,
+  parseTsconfig,
   readFileAsync,
+  realpathAsync,
   rimraf,
   writeFileAsync
 } from '../utilities'
-import { SET_BUILD_OPTIONS, SET_TEST_CONFIG } from '../actions'
+import { SET_BUILD_CONFIG, SET_TEST_CONFIG } from '../actions'
 import { store } from '../store'
 import istanbulCoverage, { FileCoverageData } from 'istanbul-lib-coverage'
 import istanbulReport from 'istanbul-lib-report'
@@ -96,7 +99,7 @@ const testNode = async (props: string[]): Promise<Result> => {
       env: {
         NODE_PATH: compact([
           process.env.NODE_PATH,
-          join(context(store.getState()), 'node_modules')
+          contextModules(store.getState())
         ]).join(':')
       }
     })
@@ -132,7 +135,7 @@ const testBrowser = async (props: string[]): Promise<Result> => {
 
   process.env.CHROME_BIN = puppeteer.executablePath()
 
-  // tslint:disable-next-line: no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const karmaConfig: Karma.ConfigOptions & { coverageIstanbulReporter: any } = {
     basePath: context(store.getState()),
     port: 9876,
@@ -211,7 +214,6 @@ const reportCoverage = async (
   reporters: Reporter[]
 ) => {
   if (condCoverage(store.getState())) {
-    // TODO: do this?
     await rimraf(join(context(store.getState()), 'coverage'))
 
     // const coverage = result.coverage
@@ -236,6 +238,9 @@ const reportCoverage = async (
 
     if (browserCoverage !== undefined) {
       Object.keys(browserCoverage).forEach(filename => {
+        const fixedPath = normalize(browserCoverage[filename].path)
+        browserCoverage[filename].path = fixedPath
+
         remappedCoverageMap.addFileCoverage(browserCoverage[filename])
       })
     }
@@ -276,9 +281,9 @@ export const test = async (flags: {
     reporter: ['text-summary']
   })
 
-  const parsedJsonConfig = parseJsonConfig(tsconfig(store.getState()))
+  await parseTsconfig()
 
-  const files: string[] = get(parsedJsonConfig, 'parsedConfig.fileNames', [])
+  const files: string[] = tsFiles(store.getState())
 
   if (isEmpty(files)) {
     throw new Error('The project does not contain any files')
@@ -329,7 +334,7 @@ export const test = async (flags: {
 
   const tmpobj = tmp.dirSync({ prefix: 'recce-', unsafeCleanup: true })
 
-  const output = tmpobj.name
+  const output = normalize(await realpathAsync(tmpobj.name))
 
   tmp.setGracefulCleanup()
 
@@ -345,15 +350,13 @@ export const test = async (flags: {
   )
 
   store.dispatch(
-    SET_BUILD_OPTIONS({
+    SET_BUILD_CONFIG({
       clean: true,
-      compilerOptions: await compilerOptions(parsedJsonConfig),
       entries: omitBy(
         {
           node: testFiles.node,
           browser: testFiles.browser
         },
-        // tslint:disable-next-line: no-unnecessary-callback-wrapper
         value => isEmpty(value)
       ),
       minimize: false,

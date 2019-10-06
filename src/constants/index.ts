@@ -194,10 +194,12 @@ const MINIFY_OPTIONS: MinifyOptions = {
 }
 
 export const INITIAL_STATE: DeepPartial<State> = {
-  options: {},
+  buildConfig: {},
+  testConfig: { coverage: false, coverageExclude: [] },
+  tsConfig: {},
   runtime: {
     files: {},
-    errors: {},
+    // errors: {},
     build: []
   },
   defaults: {
@@ -207,7 +209,6 @@ export const INITIAL_STATE: DeepPartial<State> = {
     },
     minify: MINIFY_OPTIONS,
     node: WEBPACK_NODE,
-    compilerOptions: TS_COMPILER_OPTIONS,
-    test: { coverage: false, coverageExclude: [] }
+    compilerOptions: TS_COMPILER_OPTIONS
   }
 }

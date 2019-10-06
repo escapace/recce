@@ -1,21 +1,23 @@
 #!/usr/bin/env node
 
-require('v8-compile-cache')
-const { logger } = require('@escapace/logger')
+require("v8-compile-cache");
+const { logger } = require("@escapace/logger");
 
-process.on('unhandledRejection', error => {
-  logger.error(error)
+process.on("unhandledRejection", error => {
+  logger.error(error);
 
-  process.exit(1)
-})
+  process.exit(1);
+});
 
-require('@oclif/command').run()
-// .catch(require('@oclif/errors/handle'))
+require("@oclif/command")
+  .run()
+  // .catch(require('@oclif/errors/handle'))
   .catch(err => {
-    if (!err) err = new Error('no error?')
-    process.exitCode = err.oclif && err.oclif.exit !== undefined ? err.oclif.exit : 1
+    if (!err) err = new Error("no error?");
+    process.exitCode = err.oclif && err.oclif.exit !== undefined ? err.oclif.exit : 1;
 
     if (process.exitCode !== 0 && err.message) {
-      logger.error(err.message)
+      // throw err;
+      logger.error(err.message);
     }
-  })
+  });

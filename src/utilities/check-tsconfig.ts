@@ -1,4 +1,4 @@
-import { isFile } from './isFile'
+import { isFile } from './is-file'
 
 import { context, tsconfig } from '../selectors'
 import { store } from '../store'

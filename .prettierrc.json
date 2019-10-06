@@ -3,21 +3,21 @@
     {
       "files": "*.js",
       "options": {
+        "parser": "babel",
+        "printWidth": 80,
         "semi": false,
-        "parser": "babylon",
         "singleQuote": true,
-        "trailingComma": "none",
-        "printWidth": 80
+        "trailingComma": "none"
       }
     },
     {
       "files": "*.ts",
       "options": {
-        "semi": false,
         "parser": "typescript",
+        "printWidth": 80,
+        "semi": false,
         "singleQuote": true,
-        "trailingComma": "none",
-        "printWidth": 80
+        "trailingComma": "none"
       }
     },
     {

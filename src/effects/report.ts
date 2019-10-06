@@ -1,15 +1,10 @@
-// import path from 'path'
-import gzipSize = require('gzip-size')
-import prettyBytes = require('pretty-bytes')
 import {
   buildResults,
   buildResultsWithErrors,
   condBuild,
   machineReadable
-  // compilationStats,
 } from '../selectors'
 import { readFileAsync } from '../utilities'
-import { dispatchFilesFromErrors, reportErrors } from './errors'
 import { logger } from '@escapace/logger'
 import { store } from '../store'
 import { BuildReports } from '../types'
@@ -24,15 +19,14 @@ import {
   toUpper,
   uniq
 } from 'lodash'
+import prettyBytes from 'pretty-bytes'
+import gzipSize = require('gzip-size')
 
 export const report = async () => {
   const results = buildResults(store.getState())
   const fail = buildResultsWithErrors(store.getState())
 
   if (!isEmpty(fail)) {
-    await dispatchFilesFromErrors()
-    reportErrors()
-
     // Report webpack errors
     forEach(
       uniq(
@@ -78,12 +72,10 @@ export const report = async () => {
 
   if (condBuild(store.getState())) {
     if (machineReadable(store.getState())) {
-      // tslint:disable-next-line no-console
       console.log(JSON.stringify(reports, null, '  '))
     } else {
       logger.log('')
 
-      // tslint:disable-next-line no-shadowed-variable
       forEach(reports, ({ gzipSize, size }, key) => {
         logger.log(
           `${toUpper(key)}: ${prettyBytes(size)} (${prettyBytes(

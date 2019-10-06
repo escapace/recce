@@ -1,7 +1,7 @@
 import { Compiler } from 'webpack'
+import { defaults, keys, omit, pick } from 'lodash'
 
 import mm = require('micromatch')
-import { defaults, keys, omit, pick } from 'lodash'
 
 export interface FilterWebpackPluginOptions {
   select: boolean

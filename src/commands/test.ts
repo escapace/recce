@@ -1,5 +1,3 @@
-/* tslint:disable no-unsafe-any */
-
 import Command from '../base'
 import { SET_MODE } from '../actions'
 import { pick } from 'lodash'
@@ -11,7 +9,8 @@ export default class Test extends Command {
   public static examples = [
     "$ recce test --browser 'src/**.spec.ts'",
     "$ recce test -p [directory] --browser 'src/**.spec.ts' --browser 'test/**.spec.ts'",
-    "$ recce test -p [directory] --node 'src/**.spec.ts' --node 'test/**.spec.ts'"
+    "$ recce test -p [directory] --node 'src/**.spec.ts' --node 'test/**.spec.ts'",
+    "$ recce test -p [directory] --node 'src/**.spec.ts' --browser 'src/**.spec.ts'"
   ]
 
   public static flags = {
@@ -27,7 +26,6 @@ export default class Test extends Command {
   }
 
   public async run() {
-    // tslint:disable-next-line no-shadowed-variable
     const parse = this.parse(Test)
 
     this.store.dispatch(SET_MODE('test'))
