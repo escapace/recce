@@ -17,11 +17,11 @@ export default class Test extends Command {
     ...Command.flags,
     ...pick(commandFlags, [
       'browser',
-      'node',
-      'reporter',
-      'coverage',
       'capture-console',
-      'coverage-exclude'
+      'coverage-exclude',
+      'coverage',
+      'node',
+      'reporter'
     ])
   }
 

@@ -17,6 +17,7 @@ export default class Build extends Command {
     ...Command.flags,
     ...pick(commandFlags, [
       'clean',
+      'concatenate-modules',
       'entry',
       'machine-readable',
       'minimize',

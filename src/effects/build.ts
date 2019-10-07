@@ -23,12 +23,13 @@ import {
   compact,
   concat,
   filter,
+  forEach,
   fromPairs,
+  get,
   includes,
   isEmpty,
   isString,
   isUndefined,
-  forEach,
   map,
   some,
   toLower,
@@ -81,6 +82,7 @@ export interface BuildFlags {
   output: string | undefined
   stats: boolean
   'machine-readable': boolean
+  'concatenate-modules': boolean
 }
 
 export const setup = async (flags: BuildFlags) => {
@@ -149,6 +151,7 @@ export const setup = async (flags: BuildFlags) => {
     SET_BUILD_CONFIG({
       clean: _clean,
       entries: fromPairs(map(entries, file => [path.parse(file).name, [file]])),
+      concatenateModules: get(flags, 'concatenate-modules', true),
       minimize,
       outputPath,
       modules: buildModules,

@@ -48,7 +48,7 @@ import Karma from 'karma'
 import micromatch from 'micromatch'
 import puppeteer from 'puppeteer'
 import resolveFrom from 'resolve-from'
-import tmp = require('tmp')
+import temp = require('temp')
 
 interface Coverage {
   [key: string]: FileCoverageData
@@ -332,11 +332,14 @@ export const test = async (flags: {
   const moduleType = (target: 'node' | 'browser') =>
     target === 'node' ? 'cjs' : 'umd'
 
-  const tmpobj = tmp.dirSync({ prefix: 'recce-', unsafeCleanup: true })
+  const tmpDir = temp.track().mkdirSync({
+    dir: context(store.getState()),
+    prefix: '.recce-'
+  })
 
-  const output = normalize(await realpathAsync(tmpobj.name))
+  const output = normalize(await realpathAsync(tmpDir))
 
-  tmp.setGracefulCleanup()
+  // tmp.setGracefulCleanup()
 
   process.env.NYC_CWD = output
 
@@ -352,6 +355,7 @@ export const test = async (flags: {
   store.dispatch(
     SET_BUILD_CONFIG({
       clean: true,
+      concatenateModules: false,
       entries: omitBy(
         {
           node: testFiles.node,

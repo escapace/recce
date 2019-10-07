@@ -124,6 +124,14 @@ export const commandFlags = {
   'machine-readable': flags.boolean({
     description: 'Produce machine readable JSON output.',
     default: false
+  }),
+  'concatenate-modules': flags.boolean({
+    description: [
+      'Find segments of the module graph which',
+      'can be safely concatenated into a single module.',
+      'Enabled by default.'
+    ].join('\n'),
+    allowNo: true
   })
 }
 

@@ -70,6 +70,7 @@ export interface BuildConfig {
   // compilerOptions: CompilerOptions
   entries: { [key: string]: string[] }
   modules: BuildModules
+  concatenateModules: boolean
   outputPath: string
   minimize: boolean
   clean: boolean

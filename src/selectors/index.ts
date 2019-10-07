@@ -110,6 +110,8 @@ export const compilerOptions = (state: State): CompilerOptions =>
 
 export const tsFiles = (state: State): string[] => state.tsConfig.fileNames
 
+export const concatenateModules = (state: State): boolean =>
+  state.buildConfig.concatenateModules
 export const condClean = (state: State): boolean => state.buildConfig.clean
 const condMinimize = (state: State): boolean => state.buildConfig.minimize
 export const context = (state: State): string => state.buildConfig.context
@@ -379,8 +381,8 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
   },
   optimization: {
     nodeEnv: false,
-    minimize: false
-    // concatenateModules: true
+    minimize: false,
+    concatenateModules: condTest(state) ? false : concatenateModules(state)
   },
   plugins: compact([
     // new DuplicatePackageCheckerPlugin({
@@ -440,7 +442,7 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
     ],
     symlinks: true,
     extensions: ['.ts', '.js', '.tsx', '.json'],
-    modules: [contextModules(state)],
+    // modules: [contextModules(state)],
     mainFields:
       module === 'umd' ? ['module', 'browser', 'main'] : ['module', 'main']
   },
