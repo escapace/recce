@@ -20,7 +20,7 @@ $ npm install -g recce
 $ recce COMMAND
 running command...
 $ recce (-v|--version|version)
-recce/5.0.1 linux-x64 node-v12.4.0
+recce/5.1.0 linux-x64 node-v12.4.0
 $ recce --help [COMMAND]
 USAGE
   $ recce COMMAND
@@ -44,25 +44,29 @@ USAGE
   $ recce build
 
 OPTIONS
-  -e, --entry=path          Path to the library entry point(s).
-                            Can be specified multiple times.
+  -e, --entry=path            Path to the library entry point(s).
+                              Can be specified multiple times.
 
-  -m, --module=cjs|umd|esm  CommonJS, Universal Module Definition or EcmaScript modules.
-                            EcmaScript modules are always enabled.
-                            Can be specified multiple times.
+  -m, --module=cjs|umd|esm    CommonJS, Universal Module Definition or EcmaScript modules.
+                              EcmaScript modules are always enabled.
+                              Can be specified multiple times.
 
-  -o, --output=directory    Redirect output structure to a directory.
+  -o, --output=directory      Redirect output structure to a directory.
 
-  -p, --project=path        Path to project's configuration file, or to a folder with a 'tsconfig.json'.
+  -p, --project=path          Path to project's configuration file, or to a folder with a 'tsconfig.json'.
 
-  --[no-]clean              Delete the output directory in advance.
-                            Enabled by default.
+  --[no-]clean                Delete the output directory in advance.
+                              Enabled by default.
 
-  --machine-readable        Produce machine readable JSON output.
+  --[no-]concatenate-modules  Find segments of the module graph which
+                              can be safely concatenated into a single module.
+                              Enabled by default.
 
-  --[no-]minimize           Emit minifed JavaScript. Enalbed by default.
+  --machine-readable          Produce machine readable JSON output.
 
-  --stats                   Write JSON files with compilation statistics.
+  --[no-]minimize             Emit minifed JavaScript. Enalbed by default.
+
+  --stats                     Write JSON files with compilation statistics.
 
 EXAMPLES
   $ recce build -p [directory] -m esm -e src/hello.ts
