@@ -38,6 +38,7 @@ export const tsc = async () => {
       ? false
       : /\.spec\.js$/.test(file) || /\.spec\.js\.map$/.test(file)
   const notSourceMap = (file: string) => !/\.js.map$/.test(file)
+  const onlyJs = (file: string) => /\.js$/.test(file)
 
   const result: BuildResult = {
     module: 'esm',
@@ -100,7 +101,7 @@ export const tsc = async () => {
     )
     .then(files =>
       Bluebird.all(
-        map(files, filename =>
+        map(filter(files, onlyJs), filename =>
           babel
             .transformFileAsync(filename, ({
               root: context(state),

@@ -2,7 +2,8 @@ import { expect, test } from '@oclif/test'
 import { join, resolve } from 'path'
 import { readFileAsync } from '../../src/utilities'
 
-const fixture = resolve('test/fixtures/testing')
+const fixtureA = resolve('test/fixtures/testing')
+const fixtureB = resolve('test/fixtures/json')
 
 // describe('failure modes', () => {
 //   before(() => {
@@ -28,9 +29,9 @@ const fixture = resolve('test/fixtures/testing')
 //     .it('throws on invalid context')
 // })
 
-describe('coverage', () => {
+describe('test: coverage', () => {
   before(async () => {
-    process.chdir(fixture)
+    process.chdir(fixtureA)
   })
 
   // test
@@ -62,7 +63,7 @@ describe('coverage', () => {
     .command([
       'test',
       '-p',
-      fixture,
+      fixtureA,
       '--browser',
       'src/*-browser.spec.ts',
       '--node',
@@ -74,10 +75,10 @@ describe('coverage', () => {
       "test -p [directory] --browser 'src/*-browser.spec.ts' --node 'src/*-node.spec.ts' --reporter lcovonly",
       async () => {
         const actual = (await readFileAsync(
-          join(fixture, 'coverage', 'lcov.info')
+          join(fixtureA, 'coverage', 'lcov.info')
         )).toString()
         const expected = (await readFileAsync(
-          join(fixture, 'expected', 'lcov.info')
+          join(fixtureA, 'expected', 'lcov.info')
         )).toString()
         const fixed = actual
           .replace(/^SF:.*one\.ts$/gm, 'SF:src/one.ts')
@@ -86,4 +87,23 @@ describe('coverage', () => {
         expect(fixed).to.equal(expected)
       }
     )
+})
+
+describe('test: json import', () => {
+  before(async () => {
+    process.chdir(fixtureB)
+  })
+
+  test
+    .stdout()
+    .command([
+      'test',
+      '-p',
+      fixtureB,
+      '--browser',
+      'src/*.spec.ts',
+      '--node',
+      'src/*.spec.ts'
+    ])
+    .it("test -p [directory] --browser 'src/*.spec.ts' --node 'src/*.spec.ts'")
 })

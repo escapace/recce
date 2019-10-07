@@ -4,9 +4,10 @@ import { join, resolve } from 'path'
 import { compare } from '../helpers/compare'
 
 const fixtureA = resolve('test/fixtures/hello-world')
+const fixtureB = resolve('test/fixtures/json')
 const fixtureZ = resolve('test/fixtures/invalid')
 
-describe('failure modes', () => {
+describe('build: failure modes', () => {
   before(() => {
     process.chdir(fixtureA)
   })
@@ -30,7 +31,7 @@ describe('failure modes', () => {
     .it('throws on invalid context')
 })
 
-describe('one entry', () => {
+describe('build: one entry', () => {
   before(async () => {
     process.chdir(fixtureA)
   })
@@ -80,7 +81,7 @@ describe('one entry', () => {
     )
 })
 
-describe('two entries', () => {
+describe('build: two entries', () => {
   before(() => {
     process.chdir(fixtureA)
   })
@@ -139,5 +140,18 @@ describe('two entries', () => {
       'build -p [directory] --no-minimize -m cjs -m umd -e src/hello.ts -e src/world.ts',
       async () =>
         compare(join(fixtureA, 'lib'), join(fixtureA, 'expected/case-2'))
+    )
+})
+
+describe('build: json import', () => {
+  before(() => {
+    process.chdir(fixtureB)
+  })
+
+  test
+    .stdout()
+    .command(['build', '-p', fixtureB, '--no-minimize', '-e', 'src/index.ts'])
+    .it('build -p [directory] --no-minimize -e src/index.ts', async () =>
+      compare(join(fixtureB, 'lib'), join(fixtureB, 'expected'))
     )
 })

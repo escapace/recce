@@ -1,0 +1,17 @@
+{
+  "name": "hello-world",
+  "description": "",
+  "version": "1.0.0",
+  "author": "",
+  "dependencies": {
+    "typescript": "^3.6.3"
+  },
+  "devDependencies": {
+    "@types/chai": "4.2.3",
+    "@types/mocha": "5.2.7",
+    "chai": "4.2.0"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js"
+}
