@@ -20,7 +20,7 @@ $ npm install -g recce
 $ recce COMMAND
 running command...
 $ recce (-v|--version|version)
-recce/4.0.8 linux-x64 node-v12.4.0
+recce/5.0.0 linux-x64 node-v12.4.0
 $ recce --help [COMMAND]
 USAGE
   $ recce COMMAND
@@ -120,5 +120,6 @@ EXAMPLES
   $ recce test --browser 'src/**.spec.ts'
   $ recce test -p [directory] --browser 'src/**.spec.ts' --browser 'test/**.spec.ts'
   $ recce test -p [directory] --node 'src/**.spec.ts' --node 'test/**.spec.ts'
+  $ recce test -p [directory] --node 'src/**.spec.ts' --browser 'src/**.spec.ts'
 ```
 <!-- commandsstop -->
