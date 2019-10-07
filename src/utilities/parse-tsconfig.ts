@@ -11,7 +11,7 @@ import {
   isString
 } from 'lodash'
 import path from 'path'
-import { SET_PARSED_TSCONFIG } from '../../src/actions'
+import { SET_PARSED_TSCONFIG } from '../actions'
 import { store } from '../store'
 import { tsconfig, context } from '../selectors'
 import ts from 'typescript'
