@@ -22,7 +22,7 @@
     "babel-plugin-istanbul": "5.2.0",
     "babel-plugin-lodash": "3.3.4",
     "babel-plugin-ramda": "2.0.0",
-    "common-dir": "2.0.2",
+    "common-dir": "3.0.0",
     "eslint": "6.5.1",
     "find-npm-prefix": "1.0.2",
     "gzip-size": "5.1.1",
