@@ -49,8 +49,10 @@ const ScriptTarget = {
 const getRootDir = (parsedConfig: ts.ParsedCommandLine) => {
   if (isString(get(parsedConfig, 'options.rootDir'))) {
     // If a rootDir is specified use it as the commonSourceDirectory
-    return path.resolve(context(store.getState()), parsedConfig.options
-      .rootDir as string)
+    return path.resolve(
+      context(store.getState()),
+      parsedConfig.options.rootDir as string
+    )
   } else if (
     (get(parsedConfig, 'options.composite', false) as boolean) &&
     isString(get(parsedConfig, 'options.configFilePath'))

@@ -74,12 +74,12 @@ describe('test: coverage', () => {
     .it(
       "test -p [directory] --browser 'src/*-browser.spec.ts' --node 'src/*-node.spec.ts' --reporter lcovonly",
       async () => {
-        const actual = (await readFileAsync(
-          join(fixtureA, 'coverage', 'lcov.info')
-        )).toString()
-        const expected = (await readFileAsync(
-          join(fixtureA, 'expected', 'lcov.info')
-        )).toString()
+        const actual = (
+          await readFileAsync(join(fixtureA, 'coverage', 'lcov.info'))
+        ).toString()
+        const expected = (
+          await readFileAsync(join(fixtureA, 'expected', 'lcov.info'))
+        ).toString()
         const fixed = actual
           .replace(/^SF:.*one\.ts$/gm, 'SF:src/one.ts')
           .replace(/^SF:.*two\.ts$/gm, 'SF:src/two.ts')

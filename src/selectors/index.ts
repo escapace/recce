@@ -133,9 +133,8 @@ export const rootModules = (state: State): string =>
 // const tsErrors = (state: State): { [key: string]: TypescriptErrorRecord } =>
 //   state.runtime.errors
 
-export const buildResultsWithErrors = createSelector(
-  buildResults,
-  results => filter(results, result => result.hasErrors)
+export const buildResultsWithErrors = createSelector(buildResults, results =>
+  filter(results, result => result.hasErrors)
 )
 
 export const condBuildWithErrors = createSelector(
@@ -145,106 +144,61 @@ export const condBuildWithErrors = createSelector(
 
 const _entries = (state: State) => state.buildConfig.entries
 
-const entries = createSelector(
-  _entries,
-  context,
-  (
-    ents,
-    ctx
-  ): {
-    [key: string]: string[]
-  } => mapValues(ents, value => map(value, ent => resolve(ctx, ent)))
-)
+const entries = createSelector(_entries, context, (ents, ctx): {
+  [key: string]: string[]
+} => mapValues(ents, value => map(value, ent => resolve(ctx, ent))))
 
 const _outputPath = (state: State): string => state.buildConfig.outputPath
 
-export const outputPath = createSelector(
-  context,
-  _outputPath,
-  resolve
-)
+export const outputPath = createSelector(context, _outputPath, resolve)
 
-export const outputPathEsm = createSelector(
-  outputPath,
-  o => join(o, 'esm')
-)
+export const outputPathEsm = createSelector(outputPath, o => join(o, 'esm'))
 
-const outputPathCjs = createSelector(
-  outputPath,
-  o => join(o, 'cjs')
-)
+const outputPathCjs = createSelector(outputPath, o => join(o, 'cjs'))
 
-const outputPathUmd = createSelector(
-  outputPath,
-  o => join(o, 'umd')
-)
+const outputPathUmd = createSelector(outputPath, o => join(o, 'umd'))
 
-export const outputPathTypes = createSelector(
-  outputPath,
-  o => join(o, 'types')
-)
+export const outputPathTypes = createSelector(outputPath, o => join(o, 'types'))
 
 // const condWatch = createSelector(
 //   mode,
 //   () => false
 // )
 
-export const condBuild = createSelector(
-  mode,
-  m => m === 'build'
-)
+export const condBuild = createSelector(mode, m => m === 'build')
 
-export const condTest = createSelector(
-  mode,
-  m => m === 'test'
-)
+export const condTest = createSelector(mode, m => m === 'test')
 
-const dependencies = createSelector(
-  packageJson,
-  pj => pj.dependencies
-)
-const devDependencies = createSelector(
-  packageJson,
-  pj => pj.devDependencies
-)
+const dependencies = createSelector(packageJson, pj => pj.dependencies)
+const devDependencies = createSelector(packageJson, pj => pj.devDependencies)
 const combinedDependencies = createSelector(
   devDependencies,
   dependencies,
   (dev, dep) => assign({}, dev, dep)
 )
 
-const packageName = createSelector(
-  packageJson,
-  pj => pj.name
-)
+const packageName = createSelector(packageJson, pj => pj.name)
 
 const id = (state: State): string[] => state.defaults.lodash.id
 
 const lodashOptions = (state: State): LodashOptions =>
   state.defaults.lodash.options
 
-const lodashId = createSelector(
-  combinedDependencies,
-  id,
-  (a, b): string[] => intersection(keys(a), b)
+const lodashId = createSelector(combinedDependencies, id, (a, b): string[] =>
+  intersection(keys(a), b)
 )
 
-const condLodash = createSelector(
-  lodashId,
-  (a): boolean => a.length !== 0
-)
+const condLodash = createSelector(lodashId, (a): boolean => a.length !== 0)
 
-const condRamda = createSelector(
-  combinedDependencies,
-  (a): boolean => includes(keys(a), 'ramda')
+const condRamda = createSelector(combinedDependencies, (a): boolean =>
+  includes(keys(a), 'ramda')
 )
 
 export const condStats = (state: State) => state.buildConfig.stats
 
 export const outputPathStats = (m: 'cjs' | 'umd') =>
-  createSelector(
-    m === 'cjs' ? outputPathCjs : outputPathUmd,
-    (c: string) => path.join(c, 'stats.json')
+  createSelector(m === 'cjs' ? outputPathCjs : outputPathUmd, (c: string) =>
+    path.join(c, 'stats.json')
   )
 
 export const compilationStats = (m: 'cjs' | 'umd') => (state: State) => {
@@ -265,10 +219,7 @@ export const condCoverage = createSelector(
   ({ coverage }) => coverage
 )
 
-export const testOutput = createSelector(
-  testConfig,
-  ({ output }) => output
-)
+export const testOutput = createSelector(testConfig, ({ output }) => output)
 
 export const coverageExclude = createSelector(
   testConfig,
@@ -292,10 +243,9 @@ const istanbulExclude = createSelector(
     )
 )
 
-const babelPluginIstanbulOptions = createSelector(
-  istanbulExclude,
-  exclude => ({ exclude })
-)
+const babelPluginIstanbulOptions = createSelector(istanbulExclude, exclude => ({
+  exclude
+}))
 
 const minifyOptions = (state: State): MinifyOptions => state.defaults.minify
 
@@ -452,23 +402,20 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
   node: module === 'cjs' ? nodeOptions(state) : undefined
 })
 
-const nodeTarget = createSelector(
-  packageJson,
-  (pjson): string => {
-    const node: string | undefined = get(pjson, 'engines.node')
+const nodeTarget = createSelector(packageJson, (pjson): string => {
+  const node: string | undefined = get(pjson, 'engines.node')
 
-    if (isString(node)) {
-      if (semver.valid(node) !== null) {
-        return node
-      }
-
-      const coerced = semver.coerce(node)
-
-      if (semver.validRange(node) !== null && coerced !== null) {
-        return coerced.version
-      }
+  if (isString(node)) {
+    if (semver.valid(node) !== null) {
+      return node
     }
 
-    return `${semver.major(process.versions.node)}.0.0`
+    const coerced = semver.coerce(node)
+
+    if (semver.validRange(node) !== null && coerced !== null) {
+      return coerced.version
+    }
   }
-)
+
+  return `${semver.major(process.versions.node)}.0.0`
+})

@@ -193,9 +193,11 @@ const testBrowser = async (props: string[]): Promise<Result> => {
 
   if (condCoverage(store.getState()) && code === 0) {
     coverage = JSON.parse(
-      (await readFileAsync(
-        join(testOutput(store.getState()), 'coverage', 'coverage-final.json')
-      )).toString()
+      (
+        await readFileAsync(
+          join(testOutput(store.getState()), 'coverage', 'coverage-final.json')
+        )
+      ).toString()
     )
 
     await rimraf(join(testOutput(store.getState()), 'coverage'))
