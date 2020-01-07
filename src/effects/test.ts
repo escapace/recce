@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   compact,
   defaults,
@@ -40,7 +41,10 @@ import {
 } from '../utilities'
 import { SET_BUILD_CONFIG, SET_TEST_CONFIG } from '../actions'
 import { store } from '../store'
-import istanbulCoverage, { FileCoverageData } from 'istanbul-lib-coverage'
+import istanbulCoverage, {
+  FileCoverageData,
+  CoverageMap
+} from 'istanbul-lib-coverage'
 import istanbulReport from 'istanbul-lib-report'
 import { fork } from 'child_process'
 import istanbulLibSourceMaps from 'istanbul-lib-source-maps'
@@ -218,10 +222,8 @@ const reportCoverage = async (
   if (condCoverage(store.getState())) {
     await rimraf(join(context(store.getState()), 'coverage'))
 
-    // const coverage = result.coverage
     const sourceMapStore = istanbulLibSourceMaps.createSourceMapStore()
     const coverageMap = istanbulCoverage.createCoverageMap()
-    const coverageContext = istanbulReport.createContext()
 
     const nodeCoverage = reports.node.coverage
     const browserCoverage = reports.browser.coverage
@@ -235,8 +237,10 @@ const reportCoverage = async (
       })
     }
 
-    const remappedCoverageMap = sourceMapStore.transformCoverage(coverageMap)
-      .map
+    const remappedCoverageMap = await ((sourceMapStore.transformCoverage(
+      coverageMap
+    ) as unknown) as Promise<CoverageMap>)
+    // .map
 
     if (browserCoverage !== undefined) {
       Object.keys(browserCoverage).forEach(filename => {
@@ -258,10 +262,14 @@ const reportCoverage = async (
       )
     }
 
-    const tree = istanbulReport.summarizers.pkg(remappedCoverageMap)
+    const coverageContext = istanbulReport.createContext({
+      dir: join(context(store.getState()), 'coverage'),
+      coverageMap: remappedCoverageMap
+    } as any)
 
+    // const tree = istanbulReport.summarizers.pkg(remappedCoverageMap)
     reporters.forEach(reporter =>
-      tree.visit(istanbulReports.create(reporter, {}), coverageContext)
+      (istanbulReports as any).create(reporter, {}).execute(coverageContext)
     )
   }
 }
