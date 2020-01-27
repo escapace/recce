@@ -38,7 +38,7 @@
     "lodash": "4.17.15",
     "lodash-webpack-plugin": "0.11.5",
     "micromatch": "4.0.2",
-    "mocha": "7.0.0",
+    "mocha": "7.0.1",
     "normalize-package-data": "2.5.0",
     "ora": "4.0.3",
     "pkg-up": "3.1.0",
@@ -72,7 +72,7 @@
     "@types/chai": "4.2.7",
     "@types/gzip-size": "5.1.1",
     "@types/istanbul-lib-coverage": "2.0.1",
-    "@types/istanbul-lib-report": "1.1.1",
+    "@types/istanbul-lib-report": "3.0.0",
     "@types/istanbul-lib-source-maps": "1.2.2",
     "@types/istanbul-reports": "1.1.1",
     "@types/karma": "3.0.5",
@@ -96,18 +96,18 @@
     "chai": "4.2.0",
     "codecov": "3.6.2",
     "dir-compare": "2.0.1",
-    "eslint-config-escapace": "2.0.3",
+    "eslint-config-escapace": "3.0.0",
     "eslint-config-prettier": "6.9.0",
-    "eslint-config-standard-with-typescript": "11.0.1",
+    "eslint-config-standard-with-typescript": "12.0.1",
     "eslint-plugin-import": "2.20.0",
-    "eslint-plugin-jsdoc": "20.4.0",
+    "eslint-plugin-jsdoc": "21.0.0",
     "eslint-plugin-no-null": "1.0.2",
     "eslint-plugin-node": "11.0.0",
     "eslint-plugin-prettier": "3.1.2",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-standard": "4.0.1",
     "husky": "4.2.1",
-    "lint-staged": "9.5.0",
+    "lint-staged": "10.0.2",
     "nyc": "15.0.0",
     "prettier": "1.19.1",
     "semantic-release": "16.0.3",
@@ -137,18 +137,15 @@
   "lint-staged": {
     "package.json": [
       "syncpack-format --source",
-      "syncpack-set-semver-ranges --dev --source",
-      "git add"
+      "syncpack-set-semver-ranges --dev --source"
     ],
     "{src,test}/**/*.ts": [
       "eslint --fix",
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ],
     "{src,test}/**/*.js": [
       "eslint --fix",
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "main": "lib/index.js",
@@ -199,7 +196,7 @@
     "pretest": "./manage prepare-test-fixtures",
     "readme": "oclif-dev manifest && oclif-dev readme",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov ; rimraf coverage.lcov",
-    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "test": "mocha --config ./test/mocharc.json \"test/**/*.test.ts\"",
     "test:coverage": "nyc npm run test",
     "test:travis": "npm run typecheck && npm run lint && npm run test:coverage",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test"

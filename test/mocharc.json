@@ -1,0 +1,8 @@
+{
+  "extension": ["ts"],
+  "opts": false,
+  "reporter": "spec",
+  "timeout": 15000,
+  "recursive": true,
+  "require": ["test/helpers/init.js", "ts-node/register/transpile-only", "source-map-support/register"]
+}
