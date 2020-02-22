@@ -37,7 +37,7 @@ export const webpackBuild = async () => {
 
         result.stats = info
 
-        if (!isNull(err) || stats.hasErrors() === true) {
+        if (!isNull(err) || stats.hasErrors()) {
           result.hasErrors = true
           result.assets = map(info.assets, asset => asset.name)
 
@@ -53,7 +53,7 @@ export const webpackBuild = async () => {
             map(info.assets, asset =>
               path.join(info.outputPath as string, asset.name)
             ),
-            p => !/\.js\.map/.test(p)
+            p => !/\.js\.map$/.test(p)
           )
         }
 

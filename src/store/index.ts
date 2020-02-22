@@ -27,6 +27,7 @@ export function isType<P>(
 }
 
 const reducer = (
+  // eslint-disable-next-line @typescript-eslint/default-param-last
   state: DeepPartial<State> = INITIAL_STATE,
   action: AnyAction
 ) => {

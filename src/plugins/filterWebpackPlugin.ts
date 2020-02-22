@@ -16,7 +16,7 @@ export class FilterWebpackPlugin {
   }
 
   public apply(compiler: Compiler) {
-    const filter = this.options.select === true ? pick : omit
+    const filter = this.options.select ? pick : omit
 
     compiler.hooks.emit.tapAsync(
       'RecceFilterWebpackPlugin',

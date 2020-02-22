@@ -35,7 +35,7 @@ export default abstract class extends Command {
 
   public async init() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { flags } = this.parse(this.constructor as any)
+    const { flags } = this.parse(this.constructor as any) as any
 
     store.dispatch(RESET(undefined))
     store.dispatch(SET_OCLIF_CONFIG(this.config))
