@@ -111,7 +111,7 @@
     "nyc": "15.0.0",
     "prettier": "1.19.1",
     "semantic-release": "17.0.2",
-    "syncpack": "4.5.5",
+    "syncpack": "5.0.1",
     "ts-node": "8.6.2"
   },
   "engines": {
