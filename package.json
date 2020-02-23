@@ -126,7 +126,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged && npm run typecheck && npm run test:coverage"
+      "pre-commit": "lint-staged && npm run typecheck && npm run test"
     }
   },
   "keywords": [
@@ -195,10 +195,7 @@
     "prepack": "npm run build",
     "pretest": "./manage prepare-test-fixtures",
     "readme": "oclif-dev manifest && oclif-dev readme",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov ; rimraf coverage.lcov",
-    "test": "mocha --config ./test/mocharc.json \"test/**/*.test.ts\"",
-    "test:coverage": "nyc npm run test",
-    "test:travis": "npm run typecheck && npm run lint && npm run test:coverage",
+    "test": "nyc mocha --config ./test/mocharc.json \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test"
   },
   "types": "lib/index.d.ts"
