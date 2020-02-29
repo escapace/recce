@@ -84,7 +84,7 @@
     "@types/normalize-package-data": "2.4.0",
     "@types/ora": "3.2.0",
     "@types/pretty-bytes": "5.2.0",
-    "@types/puppeteer": "2.0.0",
+    "@types/puppeteer": "2.0.1",
     "@types/recursive-readdir": "2.2.0",
     "@types/rimraf": "2.0.3",
     "@types/semver": "7.1.0",
