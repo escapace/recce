@@ -92,7 +92,7 @@
     "@types/webpack": "4.41.7",
     "@types/webpack-node-externals": "1.7.1",
     "@typescript-eslint/eslint-plugin": "2.22.0",
-    "@typescript-eslint/parser": "2.21.0",
+    "@typescript-eslint/parser": "2.22.0",
     "chai": "4.2.0",
     "codecov": "3.6.5",
     "dir-compare": "2.2.0",
