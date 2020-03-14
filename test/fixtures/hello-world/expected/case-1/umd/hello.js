@@ -374,7 +374,11 @@ module.exports = asciiToArray;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "hello", function() { return /* binding */ hello_hello; });
 
 // EXTERNAL MODULE: ./node_modules/lodash/capitalize.js
 var capitalize = __webpack_require__(2);
@@ -383,7 +387,6 @@ var capitalize_default = /*#__PURE__*/__webpack_require__.n(capitalize);
 // CONCATENATED MODULE: ./lib/esm/bang.js
 var bang = '!';
 // CONCATENATED MODULE: ./lib/esm/hello.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hello", function() { return hello_hello; });
 
 
 var hello_hello = function hello(name) {

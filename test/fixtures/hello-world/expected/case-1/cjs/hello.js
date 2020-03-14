@@ -103,7 +103,11 @@ module.exports = __webpack_require__(2);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "hello", function() { return /* binding */ hello; });
 
 // EXTERNAL MODULE: external "lodash/capitalize"
 var capitalize_ = __webpack_require__(0);
@@ -112,7 +116,6 @@ var capitalize_default = /*#__PURE__*/__webpack_require__.n(capitalize_);
 // CONCATENATED MODULE: ./lib/esm/bang.js
 const bang = '!';
 // CONCATENATED MODULE: ./lib/esm/hello.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hello", function() { return hello; });
 
 
 const hello = name => `Hello ${capitalize_default()(name)}${bang}`;
