@@ -7,6 +7,7 @@ module.exports = {
   },
   extends: ['escapace'],
   rules: {
+    '@typescript-eslint/return-await': 0,
     'eslint-disable-next-line @typescript-eslint/require-await': 0,
     '@typescript-eslint/require-await': 0,
     '@typescript-eslint/promise-function-async': 0,
