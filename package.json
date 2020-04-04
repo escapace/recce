@@ -30,7 +30,7 @@
     "istanbul-lib-coverage": "3.0.0",
     "istanbul-lib-report": "3.0.0",
     "istanbul-lib-source-maps": "4.0.0",
-    "istanbul-reports": "3.0.1",
+    "istanbul-reports": "3.0.2",
     "karma": "4.4.1",
     "karma-chrome-launcher": "3.1.0",
     "karma-coverage-istanbul-reporter": "2.1.1",
