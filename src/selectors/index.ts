@@ -133,51 +133,53 @@ export const rootModules = (state: State): string =>
 // const tsErrors = (state: State): { [key: string]: TypescriptErrorRecord } =>
 //   state.runtime.errors
 
-export const buildResultsWithErrors = createSelector(buildResults, results =>
-  filter(results, result => result.hasErrors)
+export const buildResultsWithErrors = createSelector(buildResults, (results) =>
+  filter(results, (result) => result.hasErrors)
 )
 
 export const condBuildWithErrors = createSelector(
   buildResultsWithErrors,
-  a => a.length !== 0
+  (a) => a.length !== 0
 )
 
 const _entries = (state: State) => state.buildConfig.entries
 
 const entries = createSelector(_entries, context, (ents, ctx): {
   [key: string]: string[]
-} => mapValues(ents, value => map(value, ent => resolve(ctx, ent))))
+} => mapValues(ents, (value) => map(value, (ent) => resolve(ctx, ent))))
 
 const _outputPath = (state: State): string => state.buildConfig.outputPath
 
 export const outputPath = createSelector(context, _outputPath, resolve)
 
-export const outputPathEsm = createSelector(outputPath, o => join(o, 'esm'))
+export const outputPathEsm = createSelector(outputPath, (o) => join(o, 'esm'))
 
-const outputPathCjs = createSelector(outputPath, o => join(o, 'cjs'))
+const outputPathCjs = createSelector(outputPath, (o) => join(o, 'cjs'))
 
-const outputPathUmd = createSelector(outputPath, o => join(o, 'umd'))
+const outputPathUmd = createSelector(outputPath, (o) => join(o, 'umd'))
 
-export const outputPathTypes = createSelector(outputPath, o => join(o, 'types'))
+export const outputPathTypes = createSelector(outputPath, (o) =>
+  join(o, 'types')
+)
 
 // const condWatch = createSelector(
 //   mode,
 //   () => false
 // )
 
-export const condBuild = createSelector(mode, m => m === 'build')
+export const condBuild = createSelector(mode, (m) => m === 'build')
 
-export const condTest = createSelector(mode, m => m === 'test')
+export const condTest = createSelector(mode, (m) => m === 'test')
 
-const dependencies = createSelector(packageJson, pj => pj.dependencies)
-const devDependencies = createSelector(packageJson, pj => pj.devDependencies)
+const dependencies = createSelector(packageJson, (pj) => pj.dependencies)
+const devDependencies = createSelector(packageJson, (pj) => pj.devDependencies)
 const combinedDependencies = createSelector(
   devDependencies,
   dependencies,
   (dev, dep) => assign({}, dev, dep)
 )
 
-const packageName = createSelector(packageJson, pj => pj.name)
+const packageName = createSelector(packageJson, (pj) => pj.name)
 
 const id = (state: State): string[] => state.defaults.lodash.id
 
@@ -202,7 +204,7 @@ export const outputPathStats = (m: 'cjs' | 'umd') =>
   )
 
 export const compilationStats = (m: 'cjs' | 'umd') => (state: State) => {
-  const found = find(buildResults(state), ab => ab.module === m)
+  const found = find(buildResults(state), (ab) => ab.module === m)
 
   return found === undefined ? undefined : found.stats
 }
@@ -211,7 +213,7 @@ const testConfig = (state: State) => state.testConfig
 
 export const captureConsole = createSelector(
   testConfig,
-  config => config.captureConsole
+  (config) => config.captureConsole
 )
 
 export const condCoverage = createSelector(
@@ -223,7 +225,7 @@ export const testOutput = createSelector(testConfig, ({ output }) => output)
 
 export const coverageExclude = createSelector(
   testConfig,
-  config => config.coverageExclude
+  (config) => config.coverageExclude
 )
 
 const istanbulExclude = createSelector(
@@ -232,7 +234,7 @@ const istanbulExclude = createSelector(
   outputPathEsm,
   testOutput,
   (_entries, _rootDir, _outputPathEsm, _testOutput): string[] =>
-    map(flatten(values(_entries)), _path =>
+    map(flatten(values(_entries)), (_path) =>
       relative(
         _testOutput,
         resolve(
@@ -243,9 +245,12 @@ const istanbulExclude = createSelector(
     )
 )
 
-const babelPluginIstanbulOptions = createSelector(istanbulExclude, exclude => ({
-  exclude
-}))
+const babelPluginIstanbulOptions = createSelector(
+  istanbulExclude,
+  (exclude) => ({
+    exclude
+  })
+)
 
 const minifyOptions = (state: State): MinifyOptions => state.defaults.minify
 
@@ -255,10 +260,10 @@ const webpackEntries = createSelector(
   outputPathEsm,
   context,
   (_entries, _rootDir, _outputPathEsm, _context): { [key: string]: string[] } =>
-    mapValues(_entries, value =>
+    mapValues(_entries, (value) =>
       map(
         value,
-        _path =>
+        (_path) =>
           resolve(
             _outputPathEsm,
             relative(_rootDir, resolve(_rootDir, _path)).replace(/\.ts$/, '.js')

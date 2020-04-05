@@ -1,12 +1,16 @@
-name: Release
+name: Test
 on:
-  schedule:
-    - cron: '20 16 * * 2'
-  repository_dispatch:
-    types: [release]
+  # Trigger the workflow on push or pull request,
+  # but only for the master branch
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
-  release:
-    name: Release
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,11 +33,6 @@ jobs:
         run: npm run lint
       - name: Test
         run: npm run test
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
       - name: Coverage Report
         run: npx nyc report --reporter=text-lcov > coverage.lcov
       - name: Upload Code Coverage

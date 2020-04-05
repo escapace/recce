@@ -103,21 +103,21 @@ export const parseTsconfig = async () => {
   if (isNumber(get(parsedConfig, 'options.module'))) {
     options.module = findKey(
       ModuleKind,
-      m => m === parsedConfig.options.module
+      (m) => m === parsedConfig.options.module
     ) as string
   }
 
   if (isNumber(get(parsedConfig, 'options.target'))) {
     options.target = findKey(
       ScriptTarget,
-      m => m === parsedConfig.options.target
+      (m) => m === parsedConfig.options.target
     )
   }
 
   if (isNumber(get(parsedConfig, 'options.moduleResolution'))) {
     options.moduleResolution = findKey(
       ModuleResolutionKind,
-      m => m === parsedConfig.options.moduleResolution
+      (m) => m === parsedConfig.options.moduleResolution
     )
   }
 

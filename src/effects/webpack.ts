@@ -18,11 +18,11 @@ export const webpackBuild = async () => {
       : undefined
   ])
 
-  return new Promise<BuildResult[]>(resolve => {
+  return new Promise<BuildResult[]>((resolve) => {
     webpack(configuration, (err, _stats) => {
       const statsArray: webpack.Stats[] = get(_stats, 'stats')
 
-      const results = map(statsArray, stats => {
+      const results = map(statsArray, (stats) => {
         const result: BuildResult = {
           module: get(stats, 'compilation.name'),
           assets: [],
@@ -39,10 +39,10 @@ export const webpackBuild = async () => {
 
         if (!isNull(err) || stats.hasErrors()) {
           result.hasErrors = true
-          result.assets = map(info.assets, asset => asset.name)
+          result.assets = map(info.assets, (asset) => asset.name)
 
           if (isNull(err)) {
-            result.errors = map(stats.compilation.errors, value =>
+            result.errors = map(stats.compilation.errors, (value) =>
               value.toString()
             )
           } else {
@@ -50,17 +50,17 @@ export const webpackBuild = async () => {
           }
         } else {
           result.assets = filter(
-            map(info.assets, asset =>
+            map(info.assets, (asset) =>
               path.join(info.outputPath as string, asset.name)
             ),
-            p => !/\.js\.map$/.test(p)
+            (p) => !/\.js\.map$/.test(p)
           )
         }
 
         return result
       })
 
-      results.forEach(result => store.dispatch(BUILD_RESULT(result)))
+      results.forEach((result) => store.dispatch(BUILD_RESULT(result)))
 
       resolve(results)
     })

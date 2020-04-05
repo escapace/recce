@@ -36,10 +36,7 @@ describe('build: one entry', () => {
     process.chdir(fixtureA)
   })
 
-  test
-    .stdout()
-    .command(['build', '-p', fixtureA])
-    .it('build -p [directory]')
+  test.stdout().command(['build', '-p', fixtureA]).it('build -p [directory]')
 
   // One entry
 

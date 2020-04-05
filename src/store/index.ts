@@ -31,7 +31,7 @@ const reducer = (
   state: DeepPartial<State> = INITIAL_STATE,
   action: AnyAction
 ) => {
-  return produce<State>(state as State, draft => {
+  return produce<State>(state as State, (draft) => {
     if (isType(action, SET_OCLIF_CONFIG)) {
       draft.oclifConfig = action.payload
     } else if (isType(action, SET_CONTEXT)) {

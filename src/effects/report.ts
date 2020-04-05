@@ -32,12 +32,12 @@ export const report = async () => {
       uniq(
         flatten(
           map(
-            filter(fail, f => f.hasErrors && !isUndefined(f.stats)),
+            filter(fail, (f) => f.hasErrors && !isUndefined(f.stats)),
             ({ errors }) => errors
           )
         )
       ),
-      e => logger.error(e)
+      (e) => logger.error(e)
     )
 
     throw new Error('Recce could not finish the build')
@@ -45,7 +45,7 @@ export const report = async () => {
 
   const reports = fromPairs(
     await Promise.all(
-      map(results, async result => {
+      map(results, async (result) => {
         let size = 0
         let buf = Buffer.alloc(0)
 

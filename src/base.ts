@@ -51,13 +51,13 @@ export default abstract class extends Command {
     const tests = filter(
       await Promise.all([
         isFile(project),
-        isDirectory(project).then(prod => {
+        isDirectory(project).then((prod) => {
           prod.input = join(prod.input, 'tsconfig.json')
 
           return prod
         })
       ]),
-      test => test.test
+      (test) => test.test
     )
 
     if (tests.length === 0) {

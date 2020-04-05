@@ -80,7 +80,7 @@ export const tsc = async () => {
       }
     )
 
-    suite.on('close', n => {
+    suite.on('close', (n) => {
       // process.exitCode = code
       if (n === 0) {
         resolve()
@@ -92,16 +92,16 @@ export const tsc = async () => {
     })
   })
     .then(() => recursiveReaddir(outputPathTypes(state)))
-    .then(files => Bluebird.all(map(filter(files, testDeclarations), rimraf)))
+    .then((files) => Bluebird.all(map(filter(files, testDeclarations), rimraf)))
     .then(() => recursiveReaddir(outputPathEsm(state)))
-    .then(files =>
+    .then((files) =>
       Bluebird.all(map(filter(files, tests), rimraf)).then(() =>
-        filter(files, file => !tests(file) || !notSourceMap(file))
+        filter(files, (file) => !tests(file) || !notSourceMap(file))
       )
     )
-    .then(files =>
+    .then((files) =>
       Bluebird.all(
-        map(filter(files, onlyJs), filename =>
+        map(filter(files, onlyJs), (filename) =>
           babel
             .transformFileAsync(filename, ({
               root: context(state),
@@ -115,7 +115,7 @@ export const tsc = async () => {
               filename,
               ...tscBabelOptions(state)
             } as unknown) as babel.TransformOptions)
-            .then(result => {
+            .then((result) => {
               if (result !== null) {
                 return Bluebird.all(
                   compact([
@@ -142,5 +142,5 @@ export const tsc = async () => {
         )
       ).then(() => files)
     )
-    .then(assets => store.dispatch(BUILD_RESULT(assign(result, { assets }))))
+    .then((assets) => store.dispatch(BUILD_RESULT(assign(result, { assets }))))
 }

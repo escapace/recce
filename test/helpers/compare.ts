@@ -10,7 +10,7 @@ export const compare = async (a: string, b: string) =>
     compareDate: false,
     compareContent: true,
     noDiffSet: false
-  }).then(res => {
+  }).then((res) => {
     if (!res.same) {
       let error = format(
         'equal: %s, distinct: %s, left: %s, right: %s, differences: %s, same: %s',
@@ -25,7 +25,7 @@ export const compare = async (a: string, b: string) =>
       if (!isUndefined(res.diffSet)) {
         error += '\n'
 
-        res.diffSet.forEach(entry => {
+        res.diffSet.forEach((entry) => {
           const state = states[entry.state]
           const name1 = entry.name1 ? entry.name1 : ''
           const name2 = entry.name2 ? entry.name2 : ''

@@ -75,7 +75,7 @@ const testNode = async (props: string[]): Promise<Result> => {
     ui: 'bdd'
   })
 
-  ${map(props, file => `mocha.addFile('${file}')`).join('\n')}
+  ${map(props, (file) => `mocha.addFile('${file}')`).join('\n')}
 
   mocha.run(failures => {
     process.exitCode = failures ? 1 : 0
@@ -96,7 +96,7 @@ const testNode = async (props: string[]): Promise<Result> => {
 
   let coverage
 
-  const code = await new Promise<number>(resolve => {
+  const code = await new Promise<number>((resolve) => {
     const suite = fork(executable, undefined, {
       cwd: context(store.getState()),
       silent: false,
@@ -108,11 +108,11 @@ const testNode = async (props: string[]): Promise<Result> => {
       }
     })
 
-    suite.on('message', m => {
+    suite.on('message', (m) => {
       coverage = m
     })
 
-    suite.on('close', n => {
+    suite.on('close', (n) => {
       // process.exitCode = code
       resolve(n)
     })
@@ -152,7 +152,7 @@ const testBrowser = async (props: string[]): Promise<Result> => {
       condCoverage(store.getState())
         ? 'karma-coverage-istanbul-reporter'
         : undefined
-    ]).map(plugin => resolveFrom(rootModules(store.getState()), plugin)),
+    ]).map((plugin) => resolveFrom(rootModules(store.getState()), plugin)),
     frameworks: ['mocha'],
     files: props,
     singleRun: true,
@@ -185,8 +185,8 @@ const testBrowser = async (props: string[]): Promise<Result> => {
     }
   }
 
-  const code = await new Promise<number>(resolve => {
-    const server = new Server(karmaConfig, n => {
+  const code = await new Promise<number>((resolve) => {
+    const server = new Server(karmaConfig, (n) => {
       resolve(n)
     })
 
@@ -229,7 +229,7 @@ const reportCoverage = async (
     const browserCoverage = reports.browser.coverage
 
     if (nodeCoverage !== undefined) {
-      Object.keys(nodeCoverage).forEach(filename => {
+      Object.keys(nodeCoverage).forEach((filename) => {
         const fixedPath = normalize(nodeCoverage[filename].path)
         nodeCoverage[filename].path = fixedPath
 
@@ -243,7 +243,7 @@ const reportCoverage = async (
     // .map
 
     if (browserCoverage !== undefined) {
-      Object.keys(browserCoverage).forEach(filename => {
+      Object.keys(browserCoverage).forEach((filename) => {
         const fixedPath = normalize(browserCoverage[filename].path)
         browserCoverage[filename].path = fixedPath
 
@@ -251,13 +251,13 @@ const reportCoverage = async (
       })
     }
 
-    remappedCoverageMap.filter(path => includes(files, path))
+    remappedCoverageMap.filter((path) => includes(files, path))
 
     const exclude = coverageExclude(store.getState())
 
     if (!isEmpty(exclude)) {
       remappedCoverageMap.filter(
-        path =>
+        (path) =>
           !micromatch.any(relative(context(store.getState()), path), exclude)
       )
     }
@@ -268,7 +268,7 @@ const reportCoverage = async (
     } as any)
 
     // const tree = istanbulReport.summarizers.pkg(remappedCoverageMap)
-    reporters.forEach(reporter =>
+    reporters.forEach((reporter) =>
       (istanbulReports as any).create(reporter, {}).execute(coverageContext)
     )
   }
@@ -315,7 +315,7 @@ export const test = async (flags: {
 
     const glob = key === 'node' ? flags.node : flags.browser
 
-    return filter(files, file =>
+    return filter(files, (file) =>
       micromatch.any(relative(context(store.getState()), file), glob)
     )
   }) as unknown) as {
@@ -371,7 +371,7 @@ export const test = async (flags: {
           node: testFiles.node,
           browser: testFiles.browser
         },
-        value => isEmpty(value)
+        (value) => isEmpty(value)
       ),
       minimize: false,
       outputPath: output,
@@ -392,11 +392,11 @@ export const test = async (flags: {
   const compiledTestFiles = (target: 'node' | 'browser') =>
     filter(
       get(
-        find(results, result => result.module === moduleType(target)),
+        find(results, (result) => result.module === moduleType(target)),
         'assets',
         []
       ),
-      file => file.substr(-3) === '.js'
+      (file) => file.substr(-3) === '.js'
     )
 
   const resultDisabled: Result = {

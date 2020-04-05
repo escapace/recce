@@ -87,14 +87,14 @@ export interface BuildFlags {
 
 export const setup = async (flags: BuildFlags) => {
   const entries: string[] = await Promise.all(
-    map(isUndefined(flags.entry) ? [] : uniq(compact(flags.entry)), file =>
+    map(isUndefined(flags.entry) ? [] : uniq(compact(flags.entry)), (file) =>
       realpathAsync(file)
     )
   )
 
   if (condBuild(store.getState())) {
     if (
-      uniq(map(entries, entry => path.parse(entry).name)).length !==
+      uniq(map(entries, (entry) => path.parse(entry).name)).length !==
       entries.length
     ) {
       throw new Error(
@@ -118,11 +118,11 @@ export const setup = async (flags: BuildFlags) => {
         isUndefined(flags.module)
           ? defaultModules
           : (concat(flags.module, ['esm']) as BuildModules),
-        t => t === 'cjs' || t === 'esm' || t === 'umd'
+        (t) => t === 'cjs' || t === 'esm' || t === 'umd'
       )
     )
 
-    if (!hasEntry && some(buildModules, t => t !== 'esm')) {
+    if (!hasEntry && some(buildModules, (t) => t !== 'esm')) {
       throw new Error('Specify at least one entry for CommonJS and UMD builds')
     }
   }
@@ -150,7 +150,9 @@ export const setup = async (flags: BuildFlags) => {
   store.dispatch(
     SET_BUILD_CONFIG({
       clean: _clean,
-      entries: fromPairs(map(entries, file => [path.parse(file).name, [file]])),
+      entries: fromPairs(
+        map(entries, (file) => [path.parse(file).name, [file]])
+      ),
       concatenateModules: get(flags, 'concatenate-modules', true),
       minimize,
       outputPath,
@@ -176,8 +178,8 @@ export const build = async () => {
       !condBuildWithErrors(store.getState()) &&
       (includes(modules(store.getState()), 'cjs') ||
         includes(modules(store.getState()), 'umd'))
-        ? webpackBuild().then(results => {
-            forEach(results, result => {
+        ? webpackBuild().then((results) => {
+            forEach(results, (result) => {
               if (result.module === 'cjs') {
                 update(`Completed the CommonJS build`, !result.hasErrors)
               }
@@ -205,7 +207,7 @@ export const build = async () => {
     })
     .then(stop)
     .then(report)
-    .catch(e => {
+    .catch((e) => {
       stop()
 
       throw e
