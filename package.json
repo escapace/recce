@@ -57,7 +57,7 @@
     "tslib": "1.11.1",
     "typescript": "3.8.3",
     "v8-compile-cache": "2.1.0",
-    "webpack": "4.42.1",
+    "webpack": "4.43.0",
     "webpack-node-externals": "1.7.2"
   },
   "devDependencies": {
