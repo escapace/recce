@@ -1,60 +1,96 @@
 import { expect, test } from '@oclif/test'
 import { join, resolve } from 'path'
 import { readFileAsync } from '../../src/utilities'
+import { mapKeys } from 'lodash'
 
 const fixtureA = resolve('test/fixtures/testing')
 const fixtureB = resolve('test/fixtures/json')
 
-// describe('failure modes', () => {
-//   before(() => {
-//     process.chdir(fixtureA)
-//   })
-
-//   test
-//     .stdout()
-//     .command(['build', '-p', fixtureA, '-m', 'cjs'])
-//     .catch(/Specify at least one entry for CommonJS and UMD builds/)
-//     .it('throws on target cjs and no entry')
-
-//   test
-//     .stdout()
-//     .command(['build', '-p', fixtureA, '-m', 'umd'])
-//     .catch(/Specify at least one entry for CommonJS and UMD builds/)
-//     .it('throws on target umd and no entry')
-
-//   test
-//     .stdout()
-//     .command(['build', '-p', fixtureZ])
-//     .catch(/The specified path does not exist/)
-//     .it('throws on invalid context')
-// })
+const expected = {
+  total: {
+    lines: {
+      total: 10,
+      covered: 9,
+      skipped: 0,
+      pct: 90
+    },
+    statements: {
+      total: 10,
+      covered: 9,
+      skipped: 0,
+      pct: 90
+    },
+    functions: {
+      total: 5,
+      covered: 4,
+      skipped: 0,
+      pct: 80
+    },
+    branches: {
+      total: 0,
+      covered: 0,
+      skipped: 0,
+      pct: 100
+    }
+  },
+  'src/one.ts': {
+    lines: {
+      total: 4,
+      covered: 4,
+      skipped: 0,
+      pct: 100
+    },
+    functions: {
+      total: 2,
+      covered: 2,
+      skipped: 0,
+      pct: 100
+    },
+    statements: {
+      total: 4,
+      covered: 4,
+      skipped: 0,
+      pct: 100
+    },
+    branches: {
+      total: 0,
+      covered: 0,
+      skipped: 0,
+      pct: 100
+    }
+  },
+  'src/two.ts': {
+    lines: {
+      total: 6,
+      covered: 5,
+      skipped: 0,
+      pct: 83.33
+    },
+    functions: {
+      total: 3,
+      covered: 2,
+      skipped: 0,
+      pct: 66.67
+    },
+    statements: {
+      total: 6,
+      covered: 5,
+      skipped: 0,
+      pct: 83.33
+    },
+    branches: {
+      total: 0,
+      covered: 0,
+      skipped: 0,
+      pct: 100
+    }
+  }
+}
 
 describe('test: coverage', () => {
   before(async () => {
     process.chdir(fixtureA)
   })
-
-  // test
-  //   .stdout()
-  //   .command(['build', '-p', fixtureA])
-  //   .it('build -p [directory]')
-
-  // // One entry
-
-  // test
-  //   .stdout()
-  //   .command(['build', '-p', fixtureA, '-e', 'src/hello.ts'])
-  //   .it('build -p [directory] -e src/hello.ts')
-
-  // test
-  //   .stdout()
-  //   .command(['build', '-p', fixtureA, '-m', 'cjs', '-e', 'src/hello.ts'])
-  //   .it('build -p [directory] -m cjs -e src/hello.ts')
-
-  // test
-  //   .stdout()
-  //   .command(['build', '-p', fixtureA, '-m', 'umd', '-e', 'src/hello.ts'])
-  //   .it('build -p [directory] -m umd -e src/hello.ts')
 
   // Case 1
 
@@ -69,22 +105,28 @@ describe('test: coverage', () => {
       '--node',
       'src/*-node.spec.ts',
       '--reporter',
-      'lcovonly'
+      'json-summary'
     ])
     .it(
-      "test -p [directory] --browser 'src/*-browser.spec.ts' --node 'src/*-node.spec.ts' --reporter lcovonly",
+      "test -p [directory] --browser 'src/*-browser.spec.ts' --node 'src/*-node.spec.ts' --reporter json-summary",
       async () => {
-        const actual = (
-          await readFileAsync(join(fixtureA, 'coverage', 'lcov.info'))
-        ).toString()
-        const expected = (
-          await readFileAsync(join(fixtureA, 'expected', 'lcov.info'))
-        ).toString()
-        const fixed = actual
-          .replace(/^SF:.*one\.ts$/gm, 'SF:src/one.ts')
-          .replace(/^SF:.*two\.ts$/gm, 'SF:src/two.ts')
+        const actual = mapKeys(
+          JSON.parse(
+            (
+              await readFileAsync(
+                join(fixtureA, 'coverage', 'coverage-summary.json')
+              )
+            ).toString()
+          ),
+          (_, key) =>
+            key === 'total'
+              ? 'total'
+              : key
+                  .replace(/.*one\.ts$/gm, 'src/one.ts')
+                  .replace(/.*two\.ts$/gm, 'src/two.ts')
+        )
 
-        expect(fixed).to.equal(expected)
+        expect(actual).to.deep.equal(expected)
       }
     )
 })
