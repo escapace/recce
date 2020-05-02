@@ -40,7 +40,7 @@
     "micromatch": "4.0.2",
     "mocha": "7.1.1",
     "normalize-package-data": "2.5.0",
-    "ora": "4.0.3",
+    "ora": "4.0.4",
     "pkg-up": "3.1.0",
     "pretty-bytes": "5.3.0",
     "puppeteer": "3.0.2",
