@@ -88,7 +88,7 @@
     "@types/puppeteer": "2.0.1",
     "@types/recursive-readdir": "2.2.0",
     "@types/rimraf": "3.0.0",
-    "@types/semver": "7.1.0",
+    "@types/semver": "7.2.0",
     "@types/temp": "0.8.34",
     "@types/webpack": "4.41.12",
     "@types/webpack-node-externals": "1.7.1",
