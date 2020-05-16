@@ -292,7 +292,7 @@ const webpackRules = (module: 'cjs' | 'umd') => (
   },
   {
     test: /\.js$/,
-    exclude: /tslib|lodash/,
+    exclude: /node_modules\/(tslib|lodash|sinon)/,
     use: [
       {
         loader: resolveFrom(rootModules(state), 'babel-loader'),
@@ -404,7 +404,16 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
   resolveLoader: {
     modules: [rootModules(state)]
   },
-  node: module === 'cjs' ? nodeOptions(state) : undefined
+  node:
+    module !== 'cjs'
+      ? {
+          ...nodeOptions(state),
+          fs: 'empty',
+          global: true,
+          Buffer: true,
+          setImmediate: true
+        }
+      : false
 })
 
 const nodeTarget = createSelector(packageJson, (pjson): string => {
