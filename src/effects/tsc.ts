@@ -110,7 +110,6 @@ export const tsc = async () => {
               // sourceMaps: true,
               inputSourceMap: true,
               configFile: false,
-              babelrc: false,
               filenameRelative: path.relative(context(state), filename),
               filename,
               ...tscBabelOptions(state)
@@ -127,7 +126,7 @@ export const tsc = async () => {
                           }${EOL}//# sourceMappingURL=${path.basename(
                             filename
                           )}.map${EOL}`
-                        : result.code
+                        : (result.code as string)
                     ),
                     !isFalsy(result.map) && condBuild(state)
                       ? writeFileAsync(
