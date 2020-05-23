@@ -95,7 +95,7 @@
     "@typescript-eslint/eslint-plugin": "2.33.0",
     "@typescript-eslint/parser": "2.33.0",
     "chai": "4.2.0",
-    "codecov": "3.6.5",
+    "codecov": "3.7.0",
     "dir-compare": "2.3.0",
     "eslint-config-escapace": "3.0.2",
     "eslint-config-prettier": "6.11.0",
