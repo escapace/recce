@@ -18,7 +18,7 @@ $ npm install -g recce
 $ recce COMMAND
 running command...
 $ recce (-v|--version|version)
-recce/5.4.16 linux-x64 node-v13.14.0
+recce/5.4.17 linux-x64 node-v13.14.0
 $ recce --help [COMMAND]
 USAGE
   $ recce COMMAND
