@@ -292,7 +292,7 @@ const webpackRules = (module: 'cjs' | 'umd') => (
   },
   {
     test: /\.js$/,
-    exclude: /node_modules\/(tslib|lodash|sinon)/,
+    exclude: /node_modules\/(tslib|lodash|sinon)\//,
     use: [
       {
         loader: resolveFrom(rootModules(state), 'babel-loader'),
@@ -313,7 +313,7 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
     module === 'cjs'
       ? compact([
           nodeExternals({
-            whitelist: ['lodash-es', /^ramda\/es/]
+            whitelist: [/^lodash-es/, /^ramda\/es/]
           })
         ])
       : undefined,
