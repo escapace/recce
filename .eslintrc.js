@@ -10,6 +10,7 @@ module.exports = {
     '@typescript-eslint/return-await': 0,
     'eslint-disable-next-line @typescript-eslint/require-await': 0,
     '@typescript-eslint/require-await': 0,
+    '@typescript-eslint/explicit-module-boundary-types': 0,
     '@typescript-eslint/promise-function-async': 0,
     '@typescript-eslint/restrict-template-expressions': 0,
     '@typescript-eslint/member-delimiter-style': [
