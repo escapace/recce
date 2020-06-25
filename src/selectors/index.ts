@@ -366,7 +366,7 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
       : undefined,
     // new webpack.NoEmitOnErrorsPlugin(),
     condLodash(state) ? new LodashPlugin(lodashOptions(state)) : undefined,
-    condMinimize(state)
+    module === 'umd' && condMinimize(state)
       ? new TerserPlugin({
           terserOptions: minifyOptions(state),
           sourceMap: true,
