@@ -313,7 +313,7 @@ export const webpackConfiguration = (module: 'cjs' | 'umd') => (
     module === 'cjs'
       ? compact([
           nodeExternals({
-            whitelist: [/^lodash-es/, /^ramda\/es/]
+            allowlist: [/^lodash-es/, /^ramda\/es/]
           })
         ])
       : undefined,
